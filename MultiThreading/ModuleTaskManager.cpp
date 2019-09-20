@@ -3,9 +3,8 @@
 
 void ModuleTaskManager::threadMain()
 {
-	Task* task = nullptr;
 
-	while (true)
+	while (!exitFlag)
 	{
 		// TODO 3:
 		// - Wait for new tasks to arrive
@@ -14,22 +13,24 @@ void ModuleTaskManager::threadMain()
 		// - Insert it into finishedTasks
 
 		std::unique_lock<std::mutex> lock(mtx);
-
-		while (task == nullptr)
+		Task* task = nullptr;
+		while (task == nullptr && !exitFlag)
 		{
 			if (scheduledTasks.empty())
 			{
-				event.wait(lock);
+				event.wait(lock); // Wait for a new task to come
 			}
 			else
 			{
+				// Get new task
 				task = scheduledTasks.front();
 				scheduledTasks.pop();
+
+				// Execute it
+				task->execute();
+				finishedTasks.push(task);
 			}
 		}
-
-		task->execute();
-		finishedTasks.push(task);
 	}
 }
 
@@ -38,13 +39,8 @@ bool ModuleTaskManager::init()
 	// TODO 1: Create threads (they have to execute threadMain())
 	for (int i = 0; i < MAX_THREADS; ++i)
 	{
-		threads[i] = std::thread(&ModuleTaskManager::threadMain, this); // What is wrong with this?
+		threads[i] = std::thread(&ModuleTaskManager::threadMain, this);
 	}
-
-	//for (int i = 0; i < MAX_THREADS; ++i) // Not sure if necessary
-	//{
-	//	threads[i].join();
-	//}
 
 	return true;
 }
@@ -56,7 +52,7 @@ bool ModuleTaskManager::update()
 	std::unique_lock<std::mutex> lock(mtx);
 	while (!finishedTasks.empty())
 	{
-		Module::onTaskFinished(finishedTasks.front());
+		finishedTasks.front()->owner->onTaskFinished(finishedTasks.front());
 		finishedTasks.pop();
 	}
 
@@ -69,6 +65,11 @@ bool ModuleTaskManager::cleanUp()
 
 	exitFlag = true;
 	event.notify_all();
+
+	for (int i = 0; i < MAX_THREADS; ++i)
+	{
+		threads[i].join();
+	}
 
 	return true;
 }
