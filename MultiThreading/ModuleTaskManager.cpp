@@ -3,8 +3,9 @@
 
 void ModuleTaskManager::threadMain()
 {
+	Task* task = nullptr;
 
-	while (!exitFlag)
+	while (true)
 	{
 		// TODO 3:
 		// - Wait for new tasks to arrive
@@ -12,24 +13,26 @@ void ModuleTaskManager::threadMain()
 		// - Execute it
 		// - Insert it into finishedTasks
 
-		std::unique_lock<std::mutex> lock(mtx);
-		Task* task = nullptr;
-		while (task == nullptr && !exitFlag)
 		{
-			if (scheduledTasks.empty())
+			std::unique_lock<std::mutex> lock(mtx);
+			while (scheduledTasks.empty() && !exitFlag)
 			{
 				event.wait(lock); // Wait for a new task to come
 			}
-			else
+
+			if (!exitFlag)
 			{
-				// Get new task
 				task = scheduledTasks.front();
 				scheduledTasks.pop();
-
-				// Execute it
-				task->execute();
-				finishedTasks.push(task);
 			}
+			else
+				break;
+		}
+
+		task->execute();
+
+		{
+			finishedTasks.push(task);
 		}
 	}
 }
