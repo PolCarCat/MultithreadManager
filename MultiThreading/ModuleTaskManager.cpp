@@ -62,8 +62,10 @@ bool ModuleTaskManager::update()
 bool ModuleTaskManager::cleanUp()
 {
 	// TODO 5: Notify all threads to finish and join them
-
-	exitFlag = true;
+	{
+		std::unique_lock<std::mutex> lock(mtx);
+		exitFlag = true;
+	}
 	event.notify_all();
 
 	for (int i = 0; i < MAX_THREADS; ++i)
