@@ -79,7 +79,7 @@ void server(int port)
 			Sleep(1000);
 
 			int msg_out = sendto(s, pongString.c_str(), (int)pongString.size() + 1, 0, (sockaddr*)&clientAddr, clientAddrLen);
-			if (msg_in != SOCKET_ERROR)
+			if (msg_in == SOCKET_ERROR)
 				printWSErrorAndExit("ERROR sending message");
 		}
 		else

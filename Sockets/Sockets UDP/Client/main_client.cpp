@@ -47,8 +47,7 @@ void client(const char *serverAddrStr, int port)
 	const char *remoteAddrStr = serverAddrStr; // Not so remote… :-P
 	inet_pton(AF_INET, remoteAddrStr, &remoteAddr.sin_addr);
 
-	bool wait = false;
-
+	
 	// Client string
 	std::string pingString("Ping");
 
@@ -64,26 +63,20 @@ void client(const char *serverAddrStr, int port)
 	{
 		// TODO-4:
 		// - Send a 'ping' packet to the server
-		int msg_out = sendto(s, pingString.c_str(), (int)pingString.size() + 1, 0, (const struct sockaddr*)&remoteAddr, sizeof(remoteAddr));
+		int msg_out = sendto(s, pingString.c_str(), (int)pingString.size() + 1, 0, (sockaddr*)&remoteAddr, sizeof(remoteAddr));
 		if (msg_out != SOCKET_ERROR)
-			wait = true;
-		else
-			printWSErrorAndExit("ERROR sending message");
-
-		// - Receive 'pong' packet from the server
-		while (wait)
 		{
-			int msg_in = recvfrom(s, inBuffer, inBufferLen, 0, (sockaddr*)&serverAddr, &serverAddrLen);
+			int msg_in = recvfrom(s, inBuffer, inBufferLen, 0, &serverAddr, &serverAddrLen);
 
 			if (msg_in != SOCKET_ERROR)
 			{
 				std::cout << "Client: " << inBuffer << std::endl;
-				wait = false;
-
 				Sleep(1000);
 			}
 		}
-
+		else
+			printWSErrorAndExit("ERROR sending message");
+		
 		// - Control errors in both cases
 	}
 
