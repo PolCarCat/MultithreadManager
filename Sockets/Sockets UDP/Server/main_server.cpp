@@ -41,7 +41,8 @@ void server(int port)
 	// TODO-3: Force address reuse
 	int enable = 1;
 	int res = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char*)&enable, sizeof(int));
-	//if (res == SOCKET_ERROR) { // Log and handle error }
+	if (res == SOCKET_ERROR)
+		return;
 
 	// TODO-4: Bind to a local address
 	struct sockaddr_in bindAddr;
@@ -50,7 +51,8 @@ void server(int port)
 	bindAddr.sin_addr.S_un.S_addr = INADDR_ANY; // Any local IP address
 
 	res = bind(s, (const struct sockaddr *)&bindAddr, sizeof(bindAddr));
-	//if (res == SOCKET_ERROR) { // Log and handle error }
+	if (res == SOCKET_ERROR)
+		return;
 
 	while (true)
 	{
@@ -73,7 +75,7 @@ void server(int port)
 	}
 
 	// TODO-6: Close socket
-	int closesocket(SOCKET s);
+	iResult = closesocket(s);
 
 	// TODO-7: Winsock shutdown
 	iResult = WSACleanup();

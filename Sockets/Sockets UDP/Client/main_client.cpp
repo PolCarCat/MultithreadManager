@@ -33,7 +33,8 @@ void client(const char *serverAddrStr, int port)
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR)
-		return;
+		return;
+
 	// TODO-2: Create socket (IPv4, datagrams, UDP)
 	SOCKET s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s == INVALID_SOCKET)
@@ -46,19 +47,31 @@ void client(const char *serverAddrStr, int port)
 	const char *remoteAddrStr = "127.0.0.1"; // Not so remote… :-P
 	inet_pton(AF_INET, remoteAddrStr, &remoteAddr.sin_addr);
 
+	bool wait = false;
+
 	for (int i = 5; i > 0; --i)
 	{
 		// TODO-4:
 		// - Send a 'ping' packet to the server
 		const char* ping = "ping";
 		int msg_out = sendto(s, ping, sizeof(ping), 0, (sockaddr*)&remoteAddr, sizeof(remoteAddr));
+		wait = true;
 
 		// - Receive 'pong' packet from the server
-		char* pong = "";
-		struct sockaddr_in remoteAddrServer;
-		int sizeRemoteServer = sizeof(remoteAddrServer);
-		int msg_in = recvfrom(s, pong, sizeof(pong), 0, (sockaddr*)&remoteAddrServer, &sizeRemoteServer);
-		std::cout << pong << std::endl;
+		while (wait)
+		{
+			char* pong = "";
+			struct sockaddr_in remoteAddrServer;
+			int sizeRemoteServer = sizeof(remoteAddrServer);
+			int msg_in = recvfrom(s, pong, sizeof(pong), 0, (sockaddr*)&remoteAddrServer, &sizeRemoteServer);
+
+			if (pong != "")
+			{
+				std::cout << pong << std::endl;
+				wait = false;
+			}
+		}
+
 		// - Control errors in both cases
 	}
 
