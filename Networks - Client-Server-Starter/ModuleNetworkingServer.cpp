@@ -16,9 +16,39 @@ bool ModuleNetworkingServer::start(int port)
 	// - Enter in listen mode
 	// - Add the listenSocket to the managed list of sockets using addSocket()
 
+	bool ret = true;
+
+	WSADATA wsaData;
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	if (iResult != NO_ERROR) {
+		ret = false;
+		ELOG("Server socket error");
+
+	}
+
+	//Create Socket
+	SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+
+	//Set adress reuse
+	iResult = setsockopt(listenSocket, SOL_SOCKET, SO_REUSEADDR, "1", sizeof(int));
+
+	if (iResult == SOCKET_ERROR)
+	{
+		ret = false;
+		ELOG("Server socket error");
+	}
+
+	struct sockaddr_in bindAddr;
+	bindAddr.sin_family = AF_INET;
+	//bindAddr.sin_port = htons(LISTEN_PORT);
+	bindAddr.sin_addr.S_un.S_addr = INADDR_ANY;
+
+
+
 	state = ServerState::Listening;
 
-	return true;
+	return ret;
 }
 
 bool ModuleNetworkingServer::isRunning() const
