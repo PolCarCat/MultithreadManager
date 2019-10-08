@@ -31,18 +31,18 @@ void server(int port)
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR)
-		return;
+		printWSErrorAndExit("ERROR STARTING SERVER SOCKET");
 
 	// TODO-2: Create socket (IPv4, datagrams, UDP
 	SOCKET s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s == INVALID_SOCKET)
-		return;
+		printWSErrorAndExit("ERROR CREATING SERVER SOCKET");
 
 	// TODO-3: Force address reuse
 	int enable = 1;
 	int res = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char*)&enable, sizeof(int));
 	if (res == SOCKET_ERROR)
-		return;
+		printWSErrorAndExit("ERROR SETTING SERVER SOCKET");
 
 	// TODO-4: Bind to a local address
 	struct sockaddr_in bindAddr;
@@ -52,24 +52,38 @@ void server(int port)
 
 	res = bind(s, (const struct sockaddr *)&bindAddr, sizeof(bindAddr));
 	if (res == SOCKET_ERROR)
-		return;
+		printWSErrorAndExit("ERROR BINDING SERVER SOCKET");
+
+	// Server string
+	std::string pongString("Pong");
+
+	// Input buffer
+	const int inBufferLen = 1300;
+	char inBuffer[inBufferLen];
+
+	// From address (client)
+	struct sockaddr clientAddr;
+	int clientAddrLen = sizeof(clientAddr);
 
 	while (true)
 	{
 		// TODO-5:
 		// - Receive 'ping' packet from a remote host
-		char* ping = "";
-		struct sockaddr_in remoteAddrClient;
-		int sizeRemoteServer = sizeof(remoteAddrClient);
-		int msg_in = recvfrom(s, ping, sizeof(ping), 0, (sockaddr*)&remoteAddrClient, &sizeRemoteServer);
+		int msg_in = recvfrom(s, inBuffer, inBufferLen, 0, &clientAddr, &clientAddrLen);
 
 		// - Answer with a 'pong' packet
-		if (ping != "")
+		if (msg_in != SOCKET_ERROR)
 		{
-			std::cout << ping << std::endl;
-			const char* pong = "pong";
-			int msg_out = sendto(s, pong, sizeof(pong), 0, (sockaddr*)&bindAddr, sizeof(bindAddr));
+			std::cout << "Server: " << inBuffer << std::endl;
+
+			Sleep(1000);
+
+			int msg_out = sendto(s, pongString.c_str(), (int)pongString.size() + 1, 0, (sockaddr*)&clientAddr, clientAddrLen);
+			if (msg_in != SOCKET_ERROR)
+				printWSErrorAndExit("ERROR sending message");
 		}
+		else
+			printWSErrorAndExit("no message");
 
 		// - Control errors in both cases
 	}

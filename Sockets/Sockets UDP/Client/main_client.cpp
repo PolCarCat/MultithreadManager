@@ -33,42 +33,54 @@ void client(const char *serverAddrStr, int port)
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR)
-		return;
+		printWSErrorAndExit("ERROR STARTING CLIENT SOCKET");
 
 	// TODO-2: Create socket (IPv4, datagrams, UDP)
 	SOCKET s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s == INVALID_SOCKET)
-		return;
+		printWSErrorAndExit("ERROR CREATING CLIENT SOCKET");
 
 	// TODO-3: Create an address object with the server address
 	struct sockaddr_in remoteAddr;
 	remoteAddr.sin_family = AF_INET; // IPv4
 	remoteAddr.sin_port = htons(port); // Port
-	const char *remoteAddrStr = "127.0.0.1"; // Not so remote… :-P
+	const char *remoteAddrStr = serverAddrStr; // Not so remote… :-P
 	inet_pton(AF_INET, remoteAddrStr, &remoteAddr.sin_addr);
 
 	bool wait = false;
+
+	// Client string
+	std::string pingString("Ping");
+
+	// Input buffer
+	const int inBufferLen = 1300;
+	char inBuffer[inBufferLen];
+
+	// From address (server)
+	struct sockaddr serverAddr;
+	int serverAddrLen = sizeof(serverAddr);
 
 	for (int i = 5; i > 0; --i)
 	{
 		// TODO-4:
 		// - Send a 'ping' packet to the server
-		const char* ping = "ping";
-		int msg_out = sendto(s, ping, sizeof(ping), 0, (sockaddr*)&remoteAddr, sizeof(remoteAddr));
-		wait = true;
+		int msg_out = sendto(s, pingString.c_str(), (int)pingString.size() + 1, 0, (const struct sockaddr*)&remoteAddr, sizeof(remoteAddr));
+		if (msg_out != SOCKET_ERROR)
+			wait = true;
+		else
+			printWSErrorAndExit("ERROR sending message");
 
 		// - Receive 'pong' packet from the server
 		while (wait)
 		{
-			char* pong = "";
-			struct sockaddr_in remoteAddrServer;
-			int sizeRemoteServer = sizeof(remoteAddrServer);
-			int msg_in = recvfrom(s, pong, sizeof(pong), 0, (sockaddr*)&remoteAddrServer, &sizeRemoteServer);
+			int msg_in = recvfrom(s, inBuffer, inBufferLen, 0, (sockaddr*)&serverAddr, &serverAddrLen);
 
-			if (pong != "")
+			if (msg_in != SOCKET_ERROR)
 			{
-				std::cout << pong << std::endl;
+				std::cout << "Client: " << inBuffer << std::endl;
 				wait = false;
+
+				Sleep(1000);
 			}
 		}
 
