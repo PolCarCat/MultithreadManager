@@ -77,7 +77,7 @@ void client(const char *serverAddrStr, int port)
 		// - Receive 'pong' packet from the server
 		// - Control errors in both cases
 		// - Control graceful disconnection from the server (recv receiving 0 bytes)
-		const char* ping = "ping";
+		const char* ping = "ping\n";
 
 		iResult = sendto(s, ping, sizeof ping, 0, (const struct sockaddr*)&bindAddr, sizeof(bindAddr));
 	

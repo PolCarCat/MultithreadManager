@@ -100,7 +100,7 @@ void server(int port)
 			printf(recieved);
 		}
 
-		char* pong = "pong";
+		char* pong = "pong\n";
 
 		iResult = send(accepted,pong ,sizeof pong, 0);
 
