@@ -43,6 +43,7 @@ bool ModuleNetworkingServer::start(int port)
 	//Enter in listen mode
 	iResult = listen(listenSocket, 3);
 
+
 	addSocket(listenSocket);
 
 	state = ServerState::Listening;

@@ -16,34 +16,21 @@ bool  ModuleNetworkingClient::start(const char * serverAddressStr, int serverPor
 
 	int result = 0;
 
-	//Create remote address
-	struct sockaddr_in
-	{
-		short sin_family;			//Address family
-		unsigned short sin_port;	//Port
-		struct in_addr sin_addr;	//IP Adress
-		char sin_zero[8];			// Not used
-	};
 
 	//Connect to the remote address
 
 	serverAddress.sin_family = AF_INET;
 
 	serverAddress.sin_port = htons(serverPort);
-
-	const char* remoteAddrStr = serverAddressStr;
-	inet_pton(AF_INET, remoteAddrStr, &serverAddress.sin_addr);
+	inet_pton(AF_INET, serverAddressStr, &serverAddress.sin_addr);
 
 
 	//Connect to server
-	result = connect(socketMain, (const struct sockaddr*)&serverAddress, sizeof(serverAddress));
+	result = connect(socketMain, (const sockaddr*)&serverAddress, sizeof(serverAddress));
 	if (result == SOCKET_ERROR)
 	{
 		state = ClientState::Stopped;
 	}
-
-
-	playerName = pplayerName;
 
 	addSocket(socketMain);
 
@@ -63,9 +50,12 @@ bool ModuleNetworkingClient::update()
 	if (state == ClientState::Start)
 	{
 		// TODO(jesus): Send the player name to the server
-
-		sendto(socketMain, playerName.c_str(), playerName.size(), 0, (const struct sockaddr*)&serverAddress, sizeof(serverAddress));
-
+		int error = send(socketMain, playerName.c_str(), (int)playerName.size() + 1, 0);
+		//int error = sendto(socketMain, playerName.c_str(), playerName.size(), 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
+		if (error == SOCKET_ERROR)
+		{
+			LOG("Error sending name");
+		}
 	}
 
 	return true;
