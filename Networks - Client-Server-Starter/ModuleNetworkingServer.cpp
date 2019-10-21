@@ -28,7 +28,7 @@ bool ModuleNetworkingServer::start(int port)
 	}
 
 	//Create Socket
-	SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+	listenSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	//Set adress reuse
 	iResult = setsockopt(listenSocket, SOL_SOCKET, SO_REUSEADDR, "1", sizeof(int));
@@ -39,12 +39,19 @@ bool ModuleNetworkingServer::start(int port)
 		ELOG("Server socket error");
 	}
 
+	//Create and adress object with any local address
 	struct sockaddr_in bindAddr;
 	bindAddr.sin_family = AF_INET;
-	//bindAddr.sin_port = htons(LISTEN_PORT);
+	bindAddr.sin_port = htons(port);
 	bindAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 
+	//Bind socket to the local address
+	iResult = bind(listenSocket, (const sockaddr*)&bindAddr, sizeof(bindAddr));
 
+	//Enter in listen mode
+	iResult = listen(listenSocket, 3);
+
+	addSocket(listenSocket);
 
 	state = ServerState::Listening;
 
