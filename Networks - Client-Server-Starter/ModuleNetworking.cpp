@@ -1,5 +1,6 @@
 #include "Networks.h"
 #include "ModuleNetworking.h"
+#include <list>
 
 
 static uint8 NumModulesUsingWinsock = 0;
@@ -79,6 +80,38 @@ bool ModuleNetworking::preUpdate()
 	int res = select(0, &readSet, nullptr, nullptr, &timeout);
 	if (res == SOCKET_ERROR) {
 		LOG("Select 4 read");
+	}
+
+	// Fill this array with disconnected sockets
+	std::list<SOCKET> disconnectedSockets;
+	// Read selected sockets
+	for (auto s : sockets)
+	{
+		if (FD_ISSET(s, &readSet)) {
+			if (App->modNetServer->isListenSocket(s)) { // Is the server socket
+			// Accept stuff
+				sockaddr_in socketAddr;
+				int socketAddrLen = 0;
+				int res = accept(s, (sockaddr*)&socketAddr, &socketAddrLen);
+				if (res >= 0)
+				{
+					App->modNetServer->onSocketConnected(s, socketAddr);
+				}
+			}
+			else { // Is a client socket
+			// Recv stuff
+				int res = recv(s, (char*)incomingDataBuffer, incomingDataBufferSize, 0);
+				if (res > 0)
+				{
+					App->modNetServer->onSocketReceivedData(s, incomingDataBuffer);
+				}
+				else if (res == 0 || (res == -1 && errno == ECONNRESET))
+				{
+					App->modNetServer->onSocketDisconnected(s);
+					disconnectedSockets.push_back(s);
+				}
+			}
+		}
 	}
 
 
