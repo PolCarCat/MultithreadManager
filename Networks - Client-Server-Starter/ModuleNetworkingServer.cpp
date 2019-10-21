@@ -17,15 +17,7 @@ bool ModuleNetworkingServer::start(int port)
 	// - Add the listenSocket to the managed list of sockets using addSocket()
 
 	bool ret = true;
-
-	WSADATA wsaData;
-	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-	if (iResult != NO_ERROR) {
-		ret = false;
-		ELOG("Server socket error");
-
-	}
+	int iResult = 0;
 
 	//Create Socket
 	listenSocket = socket(AF_INET, SOCK_STREAM, 0);

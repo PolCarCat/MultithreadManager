@@ -62,6 +62,25 @@ bool ModuleNetworking::preUpdate()
 	byte incomingDataBuffer[incomingDataBufferSize];
 
 	// TODO(jesus): select those sockets that have a read operation available
+	fd_set readSet;
+	FD_ZERO(&readSet);
+
+	//Fill the set
+	for (auto s : sockets) {
+		FD_SET(s, &readSet);
+	}
+
+	//Timeout
+	struct timeval timeout;
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0;
+
+	//Select check for readability
+	int res = select(0, &readSet, nullptr, nullptr, &timeout);
+	if (res == SOCKET_ERROR) {
+		LOG("Select 4 read");
+	}
+
 
 	// TODO(jesus): for those sockets selected, check wheter or not they are
 	// a listen socket or a standard socket and perform the corresponding
