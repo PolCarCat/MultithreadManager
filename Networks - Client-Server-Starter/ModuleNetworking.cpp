@@ -1,6 +1,7 @@
 #include "Networks.h"
 #include "ModuleNetworking.h"
 #include <list>
+#include <vector>
 
 
 static uint8 NumModulesUsingWinsock = 0;
@@ -91,30 +92,60 @@ bool ModuleNetworking::preUpdate()
 			if (App->modNetServer->isListenSocket(s)) { // Is the server socket
 			// Accept stuff
 				sockaddr_in socketAddr;
-				int socketAddrLen = 0;
-				int res = accept(s, (sockaddr*)&socketAddr, &socketAddrLen);
-				if (res >= 0)
+				int socketAddrLen = sizeof(socketAddr);
+				SOCKET newSocket = accept(s, (sockaddr*)&socketAddr, &socketAddrLen);
+				if (res != SOCKET_ERROR)
 				{
-					App->modNetServer->onSocketConnected(s, socketAddr);
+					addSocket(newSocket);
+					App->modNetServer->onSocketConnected(newSocket, socketAddr);
+					LOG("Client connected");
 				}
+				else
+					LOG("Client conexion failed");
 			}
 			else { // Is a client socket
 			// Recv stuff
-				int res = recv(s, (char*)incomingDataBuffer, incomingDataBufferSize, 0);
-				if (res > 0)
-				{
-					App->modNetServer->onSocketReceivedData(s, incomingDataBuffer);
+				int bytesRecv = recv(s, (char*)incomingDataBuffer, incomingDataBufferSize, 0);
+				if(bytesRecv == SOCKET_ERROR) {
+					int lastError = WSAGetLastError();
+					if(lastError == WSAEWOULDBLOCK) {
+						// Do nothing special, there was no data to receive
+						LOG("Client sent nothing");
+					}
+					else if (lastError == ECONNRESET) {
+						App->modNetServer->onSocketDisconnected(s);
+						disconnectedSockets.push_back(s);
+						LOG("Client disconnected");
+					}
 				}
-				else if (res == 0 || (res == -1 && errno == ECONNRESET))
+				else // Success
 				{
-					App->modNetServer->onSocketDisconnected(s);
-					disconnectedSockets.push_back(s);
+					// Process received data
+					if (bytesRecv == 0) { // Client disconnects
+						App->modNetServer->onSocketDisconnected(s);
+						disconnectedSockets.push_back(s);
+						LOG("Client disconnected");
+					}
+					else { // Client sends real info
+						App->modNetServer->onSocketReceivedData(s, incomingDataBuffer);
+						LOG("Client message received");
+					}
 				}
 			}
 		}
 	}
 
-
+	for (auto ds : disconnectedSockets)
+	{
+		for (auto s = sockets.begin(); s != sockets.end(); ++s)
+		{
+			if (ds == *s)
+			{
+				sockets.erase(s);
+				break;
+			}
+		}
+	}
 	// TODO(jesus): for those sockets selected, check wheter or not they are
 	// a listen socket or a standard socket and perform the corresponding
 	// operation (accept() an incoming connection or recv() incoming data,

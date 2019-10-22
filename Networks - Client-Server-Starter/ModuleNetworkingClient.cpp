@@ -35,7 +35,10 @@ bool  ModuleNetworkingClient::start(const char * serverAddressStr, int serverPor
 	addSocket(socketMain);
 
 	// If everything was ok... change the state
-	state = ClientState::Start;
+	if (result == 0)
+		state = ClientState::Start;
+	else
+		LOG("Error connecting to server");
 
 	return true;
 }
