@@ -101,7 +101,20 @@ bool ModuleNetworkingClient::gui()
 
 void ModuleNetworkingClient::onSocketReceivedData(SOCKET s, const InputMemoryStream& packet)
 {
-	state = ClientState::Stopped;
+	ServerMessage msg;
+	packet >> msg;
+
+	std::string recvMessage;
+
+	packet >> recvMessage;
+
+	switch (msg) 
+	{
+	case ServerMessage::Welcome:
+		messages.push_back(recvMessage);
+		break;
+	}
+	//state = ClientState::Stopped;
 }
 
 void ModuleNetworkingClient::onSocketDisconnected(SOCKET socket)

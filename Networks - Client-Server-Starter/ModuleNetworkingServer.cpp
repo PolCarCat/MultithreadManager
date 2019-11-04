@@ -131,6 +131,39 @@ void ModuleNetworkingServer::onSocketReceivedData(SOCKET s, const InputMemoryStr
 	//		connectedSocket.playerName = (const char *)data;
 	//	}
 	//}
+
+	for (auto &connectedSocket : connectedSockets)
+	{
+		if (connectedSocket.socket == s)
+		{
+			ClientMessage msg;
+			packet >> msg;
+
+			std::string outMessage;
+			OutputMemoryStream outPacket;
+
+			switch (msg) {
+			case ClientMessage::Hello:
+				bool newplayer = true;
+				packet >> connectedSocket.playerName;
+				outPacket << ServerMessage::Welcome;
+				outMessage = "Welc!";
+				break;
+
+			}
+
+			outPacket << outMessage;
+
+
+			int ret = sendPacket(outPacket, s);
+			if (ret == SOCKET_ERROR)
+			{
+				reportError("Error Sending Welcome Packet");
+			}
+
+		}
+	}
+
 }
 
 void ModuleNetworkingServer::onSocketDisconnected(SOCKET socket)

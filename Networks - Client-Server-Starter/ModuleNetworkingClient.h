@@ -2,6 +2,8 @@
 
 #include "ModuleNetworking.h"
 
+#include <list>
+
 class ModuleNetworkingClient : public ModuleNetworking
 {
 public:
@@ -55,5 +57,8 @@ private:
 	SOCKET socketMain = INVALID_SOCKET;
 
 	std::string playerName;
+
+	std::list<std::string> messages;
+
 };
 
