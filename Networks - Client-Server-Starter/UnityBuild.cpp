@@ -2,7 +2,7 @@
 
 #include "Networks.h"
 
-#include "MemoryStream/MemoryStream.h"
+#include "MemoryStream/MemoryStream.cpp"
 #include "ModuleNetworking.cpp"
 #include "ModuleNetworkingClient.cpp"
 #include "ModuleNetworkingServer.cpp"

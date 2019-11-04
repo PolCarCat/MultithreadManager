@@ -59,7 +59,23 @@ bool ModuleNetworkingClient::update()
 		{
 			LOG("Error sending name");
 		}
+
+		OutputMemoryStream packet;
+		packet << ClientMessage::Hello;
+		packet << playerName;
+
+		if (sendPacket(packet, socketMain)) 
+		{
+			state = ClientState::Logging;
+		}
+		else
+		{
+			disconnect();
+			state = ClientState::Stopped;
+		}
 	}
+
+	
 
 	return true;
 }
@@ -83,7 +99,7 @@ bool ModuleNetworkingClient::gui()
 	return true;
 }
 
-void ModuleNetworkingClient::onSocketReceivedData(SOCKET socket, byte * data)
+void ModuleNetworkingClient::onSocketReceivedData(SOCKET s, const InputMemoryStream& packet)
 {
 	state = ClientState::Stopped;
 }

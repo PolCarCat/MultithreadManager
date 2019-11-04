@@ -119,16 +119,18 @@ void ModuleNetworkingServer::onSocketConnected(SOCKET socket, const sockaddr_in 
 	connectedSockets.push_back(connectedSocket);
 }
 
-void ModuleNetworkingServer::onSocketReceivedData(SOCKET socket, byte * data)
+void ModuleNetworkingServer::onSocketReceivedData(SOCKET s, const InputMemoryStream& packet)
 {
 	// Set the player name of the corresponding connected socket proxy
-	for (auto &connectedSocket : connectedSockets)
-	{
-		if (connectedSocket.socket == socket)
-		{
-			connectedSocket.playerName = (const char *)data;
-		}
-	}
+
+	//NEW STUFF
+	//for (auto &connectedSocket : connectedSockets)
+	//{
+	//	if (connectedSocket.socket == socket)
+	//	{
+	//		connectedSocket.playerName = (const char *)data;
+	//	}
+	//}
 }
 
 void ModuleNetworkingServer::onSocketDisconnected(SOCKET socket)
