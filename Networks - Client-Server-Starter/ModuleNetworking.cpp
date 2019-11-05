@@ -90,7 +90,7 @@ bool ModuleNetworking::preUpdate()
 	{
 		if (FD_ISSET(s, &readSet)) {
 			if (App->modNetServer->isListenSocket(s)) { // Is the server socket
-			// Accept stuff
+				// Accept stuff
 				sockaddr_in socketAddr;
 				int socketAddrLen = sizeof(socketAddr);
 				SOCKET newSocket = accept(s, (sockaddr*)&socketAddr, &socketAddrLen);
@@ -105,16 +105,16 @@ bool ModuleNetworking::preUpdate()
 			}
 			else { // Is a client socket
 
-			InputMemoryStream packet;
-			int bytesRead = recv(s, packet.GetBufferPtr(), packet.GetCapacity(), 0);
+				InputMemoryStream packet;
+				int bytesRead = recv(s, packet.GetBufferPtr(), packet.GetCapacity(), 0);
 
-			if (bytesRead > 0)
-			{
-				packet.SetSize((uint32)bytesRead);
-				onSocketReceivedData(s, packet);
-			}
+				if (bytesRead > 0)
+				{
+					packet.SetSize((uint32)bytesRead);
+					onSocketReceivedData(s, packet);
+				}
 
-			// Recv stuff
+				// Recv stuff
 				//int bytesRecv = recv(s, (char*)incomingDataBuffer, incomingDataBufferSize, 0);
 				//if(bytesRecv == SOCKET_ERROR) {
 				//	int lastError = WSAGetLastError();

@@ -58,7 +58,8 @@ private:
 
 	std::string playerName;
 
-	std::list<std::string> messages;
-
+	std::vector<std::string> messages;
+	std::string message;
+	bool sendmsg = false;
 };
 

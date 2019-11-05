@@ -136,31 +136,65 @@ void ModuleNetworkingServer::onSocketReceivedData(SOCKET s, const InputMemoryStr
 	{
 		if (connectedSocket.socket == s)
 		{
-			ClientMessage msg;
-			packet >> msg;
+			ClientMessage clientmsg;
+			packet >> clientmsg;
 
-			std::string outMessage;
-			OutputMemoryStream outPacket;
-
-			switch (msg) {
-			case ClientMessage::Hello:
-				bool newplayer = true;
-				packet >> connectedSocket.playerName;
-				outPacket << ServerMessage::Welcome;
-				outMessage = "Welc!";
-				break;
-
-			}
-
-			outPacket << outMessage;
-
-
-			int ret = sendPacket(outPacket, s);
-			if (ret == SOCKET_ERROR)
+			if (clientmsg == ClientMessage::Hello)
 			{
-				reportError("Error Sending Welcome Packet");
+				std::string outMessage;
+				OutputMemoryStream outPacket;
+
+				switch (clientmsg) {
+				case ClientMessage::Hello:
+					bool newplayer = true;
+					packet >> connectedSocket.playerName;
+					outPacket << ServerMessage::Welcome;
+					outMessage = "Welc!";
+					break;
+
+				}
+
+				outPacket << outMessage;
+
+
+				int ret = sendPacket(outPacket, s);
+				if (ret == SOCKET_ERROR)
+				{
+					reportError("Error Sending Welcome Packet");
+				}
 			}
 
+			if (clientmsg == ClientMessage::Message)
+			{
+				std::string playername;
+
+				for (int i = 0; i < connectedSockets.size(); ++i)
+				{
+					if (connectedSockets[i].socket == s)
+					{
+						playername = connectedSockets[i].playerName;
+					}
+				}
+
+				std::string message;
+				packet >> message;
+
+				OutputMemoryStream outPacket;
+				outPacket << ServerMessage::Message;
+
+				std::string text = playername + ": " + message;
+				outPacket << text;
+
+				for (int i = 0; i < connectedSockets.size(); ++i)
+				{
+					int ret = sendPacket(outPacket, connectedSockets[i].socket);
+
+					if (ret == SOCKET_ERROR)
+					{
+						reportError("Error Sending Welcom Packet");
+					}
+				}
+			}
 		}
 	}
 
