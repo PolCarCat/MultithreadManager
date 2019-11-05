@@ -139,26 +139,53 @@ void ModuleNetworkingServer::onSocketReceivedData(SOCKET s, const InputMemoryStr
 			ClientMessage msg;
 			packet >> msg;
 
+			bool sendSomething = false;
 			std::string outMessage;
 			OutputMemoryStream outPacket;
 
+
 			switch (msg) {
 			case ClientMessage::Hello:
-				bool newplayer = true;
 				packet >> connectedSocket.playerName;
+
 				outPacket << ServerMessage::Welcome;
-				outMessage = "Welc!";
+				outMessage = "Welcome to the chat!";
+
+				outPacket << outMessage;
+				sendSomething = true;
+				break;
+			case ClientMessage::Message:
+				outPacket << ServerMessage::Message;
+				packet >> outMessage;
+				outPacket << outMessage;
+				for (auto &socket : connectedSockets)
+				{
+
+
+						int ret = sendPacket(outPacket, socket.socket);
+
+						if (ret == SOCKET_ERROR)
+						{
+							reportError("Error Sending Welcome Packet");
+						}
+
+
+				}
+				outPacket.Clear();
 				break;
 
 			}
 
-			outPacket << outMessage;
-
-
-			int ret = sendPacket(outPacket, s);
-			if (ret == SOCKET_ERROR)
+	
+			if (sendSomething)
 			{
-				reportError("Error Sending Welcome Packet");
+				int ret = sendPacket(outPacket, s);
+
+				if (ret == SOCKET_ERROR)
+				{
+					reportError("Error Sending Welcome Packet");
+				}
+				outPacket.Clear();
 			}
 
 		}

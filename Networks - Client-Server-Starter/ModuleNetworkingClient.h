@@ -60,5 +60,8 @@ private:
 
 	std::list<std::string> messages;
 
+	std::string messageToSend;
+	bool sendMsg = false;
+
 };
 

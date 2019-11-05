@@ -74,6 +74,20 @@ bool ModuleNetworkingClient::update()
 			state = ClientState::Stopped;
 		}
 	}
+	else if (state == ClientState::Logging) 
+	{
+		if (sendMsg) 
+		{
+			OutputMemoryStream packet;
+			packet << ClientMessage::Message;
+			packet << playerName + ": " + messageToSend;
+
+			sendPacket(packet, socketMain);
+
+			messageToSend.clear();
+			sendMsg = false;
+		}
+	}
 
 	
 
@@ -93,6 +107,25 @@ bool ModuleNetworkingClient::gui()
 
 		ImGui::Text("%s connected to the server...", playerName.c_str());
 
+		ImGui::BeginChild("Chat", ImVec2(375, 400), true);
+
+		for (std::list<std::string>::iterator it = messages.begin(); it != messages.end(); ++it)
+		{
+			ImGui::Text("%s", (*it).c_str());
+		}
+		
+
+		ImGui::EndChild();
+
+		char buff[64] = "\0";
+
+		if (ImGui::InputText("", buff, 1024, ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			sendMsg = true;
+			std::string msg(buff);
+			messageToSend = msg;
+		}
+
 		ImGui::End();
 	}
 
@@ -105,12 +138,14 @@ void ModuleNetworkingClient::onSocketReceivedData(SOCKET s, const InputMemoryStr
 	packet >> msg;
 
 	std::string recvMessage;
-
 	packet >> recvMessage;
 
 	switch (msg) 
 	{
 	case ServerMessage::Welcome:
+		messages.push_back(recvMessage);
+		break;
+	case ServerMessage::Message:
 		messages.push_back(recvMessage);
 		break;
 	}

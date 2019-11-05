@@ -105,45 +105,14 @@ bool ModuleNetworking::preUpdate()
 			}
 			else { // Is a client socket
 
-			InputMemoryStream packet;
-			int bytesRead = recv(s, packet.GetBufferPtr(), packet.GetCapacity(), 0);
+				InputMemoryStream packet;
+				int bytesRead = recv(s, packet.GetBufferPtr(), packet.GetCapacity(), 0);
 
-			if (bytesRead > 0)
-			{
-				packet.SetSize((uint32)bytesRead);
-				onSocketReceivedData(s, packet);
-			}
-
-			// Recv stuff
-				//int bytesRecv = recv(s, (char*)incomingDataBuffer, incomingDataBufferSize, 0);
-				//if(bytesRecv == SOCKET_ERROR) {
-				//	int lastError = WSAGetLastError();
-				//	if(lastError == WSAEWOULDBLOCK) {
-				//		// Do nothing special, there was no data to receive
-				//		LOG("Client sent nothing");
-				//	}
-				//	else if (lastError == ECONNRESET) {
-				//		App->modNetServer->onSocketDisconnected(s);
-				//		disconnectedSockets.push_back(s);
-				//		LOG("Client disconnected");
-				//	}
-				//}
-				//else // Success
-				//{
-				//	// Process received data
-				//	if (bytesRecv == 0) { // Client disconnects
-				//		App->modNetServer->onSocketDisconnected(s);
-				//		disconnectedSockets.push_back(s);
-				//		LOG("Client disconnected");
-				//	}
-				//	else { // Client sends real info
-				//		//App->modNetServer->onSocketReceivedData(s, incomingDataBuffer);
-
-				//		//NEW STUFF----------------------------------------------------
-
-				//		//LOG("Client message received");
-				//	}
-				//}
+				if (bytesRead > 0)
+				{
+					packet.SetSize((uint32)bytesRead);
+					onSocketReceivedData(s, packet);
+				}
 			}
 		}
 	}
