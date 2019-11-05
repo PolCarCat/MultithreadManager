@@ -202,14 +202,33 @@ void ModuleNetworkingServer::onSocketReceivedData(SOCKET s, const InputMemoryStr
 
 void ModuleNetworkingServer::onSocketDisconnected(SOCKET socket)
 {
+	std::string playername;
+
 	// Remove the connected socket from the list
 	for (auto it = connectedSockets.begin(); it != connectedSockets.end(); ++it)
 	{
 		auto &connectedSocket = *it;
 		if (connectedSocket.socket == socket)
 		{
+			playername = connectedSocket.playerName;
 			connectedSockets.erase(it);
 			break;
+		}
+	}
+
+	OutputMemoryStream outPacket;
+	outPacket << ServerMessage::UserDisc;
+
+	std::string text = playername + " disconnected";
+	outPacket << text;
+
+	for (int i = 0; i < connectedSockets.size(); ++i)
+	{
+		int ret = sendPacket(outPacket, connectedSockets[i].socket);
+
+		if (ret == SOCKET_ERROR)
+		{
+			reportError("Error Sending UserDisc Packet");
 		}
 	}
 }

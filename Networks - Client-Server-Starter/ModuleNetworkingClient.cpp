@@ -155,6 +155,9 @@ void ModuleNetworkingClient::onSocketReceivedData(SOCKET s, const InputMemoryStr
 	case ServerMessage::Message:
 		messages.push_back(recvMessage);
 		break;
+	case ServerMessage::UserDisc:
+		messages.push_back(recvMessage);
+		break;
 	}
 	//state = ClientState::Stopped;
 }
