@@ -5,7 +5,7 @@ class ReplicationManagerClient
 {
 
 public:
-	void Read(const InputMemoryStream& packet);
+	void read(const InputMemoryStream& packet);
 
 };
 

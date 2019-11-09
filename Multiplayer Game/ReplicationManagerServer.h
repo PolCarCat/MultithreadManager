@@ -21,7 +21,7 @@ public:
 	void Update(uint32 networkId);
 	void Destroy(uint32 networkId);
 
-	void Write(OutputMemoryStream &packet);
+	void write(OutputMemoryStream &packet);
 
 private:
 	std::vector<ReplicationCommand> commands;
