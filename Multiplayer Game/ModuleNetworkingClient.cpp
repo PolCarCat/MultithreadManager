@@ -188,13 +188,14 @@ void ModuleNetworkingClient::onUpdate()
 			}
 
 			// Disconnect from Server if timeout
-			if (lastPacketReceivedTime >= DISCONNECT_TIMEOUT_SECONDS)
+			if (Time.time >= lastPacketReceivedTime + DISCONNECT_TIMEOUT_SECONDS)
 			{
 				WLOG("Conexion timeout. Disconnecting from server.");
-				//disconnect();
+				disconnect();
 			}
 
 			// Send pings periodically to server
+			secondsSinceLastPing += Time.deltaTime;
 			if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
 			{
 				secondsSinceLastPing = 0.0f;

@@ -206,15 +206,18 @@ void ModuleNetworkingServer::onUpdate()
 		// Disconnect client if timeout
 		for (int i = 0; i < MAX_CLIENTS; ++i)
 		{
-			if (clientProxies[i].lastPacketReceivedTime >= DISCONNECT_TIMEOUT_SECONDS)
+			if (!clientProxies[i].connected)
+				break;
+			if (Time.time >= clientProxies[i].lastPacketReceivedTime + DISCONNECT_TIMEOUT_SECONDS)
 			{
 				WLOG("Player %s kicked. Conexion timeout.", clientProxies[i].name.c_str());
-				//NetworkDestroy(clientProxies[i].gameObject);
-				//destroyClientProxy(&clientProxies[i]);
+				NetworkDestroy(clientProxies[i].gameObject);
+				destroyClientProxy(&clientProxies[i]);
 			}
 		}
 
 		// Send pings periodically to clients
+		secondsSinceLastPing += Time.deltaTime;
 		if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
 		{
 			secondsSinceLastPing = 0.0f;
@@ -222,7 +225,8 @@ void ModuleNetworkingServer::onUpdate()
 			packet << ServerMessage::Ping;
 			for (int i = 0; i < MAX_CLIENTS; ++i)
 			{
-				sendPacket(packet, clientProxies[i].address);
+				if (clientProxies[i].connected)
+					sendPacket(packet, clientProxies[i].address);
 			}
 		}
 	}
