@@ -32,7 +32,7 @@ void ReplicationManagerServer::Destroy(uint32 networkId)
 	commands.push_back(newCommand);
 }
 
-void ReplicationManagerServer::Write(OutputMemoryStream & packet)
+void ReplicationManagerServer::write(OutputMemoryStream & packet)
 {
 	packet << ServerMessage::Replication;
 
@@ -45,6 +45,7 @@ void ReplicationManagerServer::Write(OutputMemoryStream & packet)
 		{
 		case (ReplicationAction::Create):
 		case (ReplicationAction::Update):
+		{
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
 
@@ -53,9 +54,12 @@ void ReplicationManagerServer::Write(OutputMemoryStream & packet)
 			packet << newGameObject->tag;
 
 
+		}
 			break;
 		case (ReplicationAction::Destroy):
+		{
 			//Nothing
+		}
 			break;
 
 		}

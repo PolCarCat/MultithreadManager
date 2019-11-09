@@ -130,7 +130,7 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 		// TODO(jesus): Handle incoming messages from server
 		if (message == ServerMessage::Replication)
 		{
-			replicationManager.Read(packet);
+			replicationManager.read(packet);
 		}
 
 	}
