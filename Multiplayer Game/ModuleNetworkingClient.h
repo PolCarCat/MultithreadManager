@@ -36,7 +36,7 @@ private:
 
 	void onDisconnect() override;
 
-
+	ReplicationManagerClient replicationManager;
 
 	//////////////////////////////////////////////////////////////////////
 	// Client state
