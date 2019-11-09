@@ -36,7 +36,6 @@ void ReplicationManagerServer::Write(OutputMemoryStream & packet)
 {
 	packet << ServerMessage::Replication;
 
-
 	for (auto command : commands) 
 	{
 		packet << command.action;
