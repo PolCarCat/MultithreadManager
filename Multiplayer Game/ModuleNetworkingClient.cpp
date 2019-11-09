@@ -186,6 +186,22 @@ void ModuleNetworkingClient::onUpdate()
 
 				sendPacket(packet, serverAddress);
 			}
+
+			// Disconnect from Server if timeout
+			if (lastPacketReceivedTime >= DISCONNECT_TIMEOUT_SECONDS)
+			{
+				WLOG("Conexion timeout. Disconnecting from server.");
+				//disconnect();
+			}
+
+			// Send pings periodically to server
+			if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
+			{
+				secondsSinceLastPing = 0.0f;
+				OutputMemoryStream packet;
+				packet << ClientMessage::Ping;
+				sendPacket(packet, serverAddress);
+			}
 		}
 	}
 
