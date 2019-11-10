@@ -20,7 +20,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 			GameObject* newGO = Instantiate();
 			App->modLinkingContext->registerNetworkGameObject(newGO);
 
-			packet >> newGO->position;
+			//packet >> newGO->position;
 			packet >> newGO->tag;
 		}
 			break;
@@ -28,7 +28,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 		{
 			GameObject* go = App->modLinkingContext->getNetworkGameObject(id);
 
-			packet >> go->position;
+			//packet >> go->position;
 			packet >> go->tag;
 		}	
 			break;

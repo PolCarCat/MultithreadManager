@@ -49,7 +49,7 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
 
-			packet << newGameObject->position;
+			//packet << newGameObject->position;
 			//Other stuff
 			packet << newGameObject->tag;
 
