@@ -51,6 +51,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
+				packet << newGameObject->size.x;
+				packet << newGameObject->size.y;
 				packet << newGameObject->angle;
 
 				std::string texname = newGameObject->texture->filename;
@@ -66,7 +68,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 		{
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
-			if (newGameObject != nullptr) {
+			if (newGameObject != nullptr) 
+			{
 				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
@@ -74,17 +77,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 				
 			}
 
-			//packet << std::string(newGameObject->texture->filename);
-
-
 		}
-			break;
-		case (ReplicationAction::Destroy):
-		{
-			//Nothing
-		}
-			break;
-
+		break;
 		}
 	}
 

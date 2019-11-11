@@ -7,26 +7,33 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 	while (packet.RemainingByteCount() > 0) 
 	{
 		ReplicationAction action;
-
 		uint32 id;
-
 
 		packet >> action;
 		packet >> id;
 
 
-		int bytes = packet.RemainingByteCount();
-
 		switch (action)
 		{
 		case ReplicationAction::Create:
 		{
-			GameObject* newGO = Instantiate();
-			App->modLinkingContext->registerNetworkGameObject(newGO);
+			GameObject* newGO = nullptr;
+			if (App->modLinkingContext->getNetworkGameObject(id)) 
+			{
+				newGO = App->modLinkingContext->getNetworkGameObject(id);
+			}
+			else
+			{
+				newGO = Instantiate();
+				App->modLinkingContext->registerNetworkGameObject(newGO);
+			}
+
 
 			//packet >> newGO->tag;
 			packet >> newGO->position.x;
 			packet >> newGO->position.y;
+			packet >> newGO->size.x;
+			packet >> newGO->size.y;
 			packet >> newGO->angle;
 
 			std::string texname;
@@ -47,9 +54,6 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 				packet >> go->position.y;
 				packet >> go->angle;
 
-				//std::string textname;
-				//packet >> textname;
-				//go->texture->filename = textname.c_str();
 
 			}
 
