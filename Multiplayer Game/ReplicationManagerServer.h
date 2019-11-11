@@ -23,6 +23,8 @@ public:
 
 	void write(OutputMemoryStream &packet);
 
+	int CommandsSize() { return commands.size();  };
+
 private:
 	std::vector<ReplicationCommand> commands;
 

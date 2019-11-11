@@ -202,6 +202,18 @@ void ModuleNetworkingServer::onUpdate()
 
 				// TODO(jesus): If the replication interval passed and the replication manager of this proxy
 				//              has pending data, write and send a replication packet to this client.
+
+				float time = clientProxy.secondsSinceLastReplication + replicationDeliveryIntervalSeconds;
+
+				if (Time.time > time && clientProxy.replicationManager.CommandsSize() > 0) 
+				{
+					clientProxy.secondsSinceLastReplication = Time.time;
+
+					clientProxy.replicationManager.write(packet);
+					sendPacket(packet, clientProxy.address);
+				}
+
+
 			}
 		}
 
@@ -247,6 +259,7 @@ void ModuleNetworkingServer::onConnectionReset(const sockaddr_in & fromAddress)
 			if (clientProxies[i].connected && proxy->clientId != clientProxies[i].clientId)
 			{
 				// TODO(jesus): Notify this proxy's replication manager about the destruction of this player's game object
+				clientProxies[i].replicationManager.Destroy(proxy->gameObject->networkId);
 			}
 		}
 
@@ -363,6 +376,7 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 		if (clientProxies[i].connected)
 		{
 			// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
+			clientProxies[i].replicationManager.Create(clientProxy.gameObject->networkId);
 		}
 	}
 
@@ -392,6 +406,7 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
 		if (clientProxies[i].connected)
 		{
 			// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
+			clientProxies[i].replicationManager.Create(gameObject->networkId);
 		}
 	}
 
@@ -411,6 +426,7 @@ void ModuleNetworkingServer::destroyNetworkObject(GameObject * gameObject)
 		if (clientProxies[i].connected)
 		{
 			// TODO(jesus): Notify this proxy's replication manager about the destruction of this game object
+			clientProxies[i].replicationManager.Destroy(gameObject->networkId);
 		}
 	}
 
@@ -429,6 +445,7 @@ void ModuleNetworkingServer::updateNetworkObject(GameObject * gameObject)
 		if (clientProxies[i].connected)
 		{
 			// TODO(jesus): Notify this proxy's replication manager about the update of this game object
+			clientProxies[i].replicationManager.Update(gameObject->networkId);
 		}
 	}
 }
