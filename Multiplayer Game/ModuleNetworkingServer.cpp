@@ -203,12 +203,11 @@ void ModuleNetworkingServer::onUpdate()
 				// TODO(jesus): If the replication interval passed and the replication manager of this proxy
 				//              has pending data, write and send a replication packet to this client.
 
-				float time = clientProxy.secondsSinceLastReplication + replicationDeliveryIntervalSeconds;
+				clientProxy.secondsSinceLastReplication += Time.deltaTime;
 
-				if (Time.time > time && clientProxy.replicationManager.CommandsSize() > 0) 
+				if (clientProxy.secondsSinceLastReplication > replicationDeliveryIntervalSeconds && clientProxy.replicationManager.CommandsSize() > 0)
 				{
-					clientProxy.secondsSinceLastReplication = Time.time;
-
+					clientProxy.secondsSinceLastReplication = 0;
 					clientProxy.replicationManager.write(packet);
 					sendPacket(packet, clientProxy.address);
 				}

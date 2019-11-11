@@ -34,7 +34,7 @@ void ReplicationManagerServer::Destroy(uint32 networkId)
 
 void ReplicationManagerServer::write(OutputMemoryStream & packet)
 {
-	packet << ServerMessage::Replication;
+	//packet << ServerMessage::Replication;
 
 	for (auto command : commands) 
 	{
@@ -44,15 +44,34 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 		switch (command.action) 
 		{
 		case (ReplicationAction::Create):
+		{
+			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
+			//Serialize Fields
+			if (newGameObject != nullptr) {
+				//packet << newGameObject->tag;
+				packet << newGameObject->position.x;
+				packet << newGameObject->position.y;
+				packet << newGameObject->angle;
+
+				std::string texname = newGameObject->texture->filename;
+				packet << texname;
+			}
+
+			//packet << std::string(newGameObject->texture->filename);
+
+
+		}
+		break;
 		case (ReplicationAction::Update):
 		{
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
 			if (newGameObject != nullptr) {
-				packet << newGameObject->tag;
+				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
-				//packet << newGameObject->angle;
+				packet << newGameObject->angle;
+				
 			}
 
 			//packet << std::string(newGameObject->texture->filename);
