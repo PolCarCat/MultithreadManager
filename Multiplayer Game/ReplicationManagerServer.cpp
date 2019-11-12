@@ -3,33 +3,22 @@
 
 void ReplicationManagerServer::Create(uint32 networkId)
 {
-	ReplicationCommand newCommand;
+	AddAction(ReplicationAction::Create, networkId);
 
-	newCommand.action = ReplicationAction::Create;
-	newCommand.networkId = networkId;
-
-	commands.push_back(newCommand);
 }
 
 void ReplicationManagerServer::Update(uint32 networkId)
 {
-	ReplicationCommand newCommand;
 
-	newCommand.action = ReplicationAction::Update;
-	newCommand.networkId = networkId;
-
-	commands.push_back(newCommand);
+	AddAction(ReplicationAction::Update, networkId);
 
 }
 
 void ReplicationManagerServer::Destroy(uint32 networkId)
 {
-	ReplicationCommand newCommand;
 
-	newCommand.action = ReplicationAction::Destroy;
-	newCommand.networkId = networkId;
+	AddAction(ReplicationAction::Destroy, networkId);
 
-	commands.push_back(newCommand);
 }
 
 void ReplicationManagerServer::write(OutputMemoryStream & packet)
@@ -90,4 +79,24 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 	}
 
 	commands.clear();
+}
+
+
+
+void ReplicationManagerServer::AddAction(ReplicationAction action, uint32 networkId)
+{
+
+	//for (int i = 0; i < commands.size(); i++) {
+	//	if (commands[i].networkId == networkId) {
+	//		commands[i].action = action;
+	//		return;
+	//	}
+	//}
+
+	ReplicationCommand newCommand;
+
+	newCommand.action = action;
+	newCommand.networkId = networkId;
+
+	commands.push_back(newCommand);
 }

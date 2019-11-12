@@ -28,5 +28,7 @@ public:
 private:
 	std::vector<ReplicationCommand> commands;
 
+	void AddAction(ReplicationAction action, uint32 networkId);
+
 };
 
