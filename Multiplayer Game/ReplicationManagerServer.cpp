@@ -10,7 +10,8 @@ void ReplicationManagerServer::Create(uint32 networkId)
 void ReplicationManagerServer::Update(uint32 networkId)
 {
 
-	AddAction(ReplicationAction::Update, networkId);
+	if (!CheckId(networkId))
+		AddAction(ReplicationAction::Update, networkId);
 
 }
 
@@ -86,12 +87,12 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 void ReplicationManagerServer::AddAction(ReplicationAction action, uint32 networkId)
 {
 
-	//for (int i = 0; i < commands.size(); i++) {
-	//	if (commands[i].networkId == networkId) {
-	//		commands[i].action = action;
-	//		return;
-	//	}
-	//}
+	for (int i = 0; i < commands.size(); i++) {
+		if (commands[i].networkId == networkId) {
+			commands[i].action = action;
+			return;
+		}
+	}
 
 	ReplicationCommand newCommand;
 
@@ -99,4 +100,14 @@ void ReplicationManagerServer::AddAction(ReplicationAction action, uint32 networ
 	newCommand.networkId = networkId;
 
 	commands.push_back(newCommand);
+}
+
+bool ReplicationManagerServer::CheckId(uint32 networkId)
+{
+
+	for (auto command : commands) 
+	{
+		if (command.networkId == networkId) return true;
+	}
+	return false;
 }
