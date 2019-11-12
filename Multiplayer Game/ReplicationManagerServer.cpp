@@ -28,8 +28,7 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 
 	for (auto command : commands) 
 	{
-		packet << command.action;
-		packet << command.networkId;
+
 
 		switch (command.action) 
 		{
@@ -38,6 +37,10 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
 			if (newGameObject != nullptr) {
+
+				packet << command.action;
+				packet << command.networkId;
+
 				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
@@ -57,26 +60,27 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
 
-			float posX = 0;
-			float posY = 0;
-			float angle = 0;
 			if (newGameObject != nullptr) 
 			{
+				packet << command.action;
+				packet << command.networkId;
+
 				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
 				packet << newGameObject->angle;		
 			}
-			else 
-			{
-				packet << posX;
-				packet << posY;
-				packet << angle;
-			}
 
 		}
 		break;
+		case (ReplicationAction::Destroy):
+		{
+			packet << command.action;
+			packet << command.networkId;
 		}
+		break;
+		}
+
 	}
 
 	commands.clear();
@@ -87,12 +91,12 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 void ReplicationManagerServer::AddAction(ReplicationAction action, uint32 networkId)
 {
 
-	for (int i = 0; i < commands.size(); i++) {
-		if (commands[i].networkId == networkId) {
-			commands[i].action = action;
-			return;
-		}
-	}
+	//for (int i = 0; i < commands.size(); i++) {
+	//	if (commands[i].networkId == networkId) {
+	//		commands[i].action = action;
+	//		return;
+	//	}
+	//}
 
 	ReplicationCommand newCommand;
 
