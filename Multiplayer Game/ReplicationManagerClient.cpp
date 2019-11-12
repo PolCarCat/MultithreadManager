@@ -54,7 +54,6 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 				packet >> go->position.y;
 				packet >> go->angle;
 
-
 			}
 
 		}	

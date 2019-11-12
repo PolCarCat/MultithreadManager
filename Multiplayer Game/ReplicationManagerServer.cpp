@@ -60,21 +60,28 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 			}
 
 			//packet << std::string(newGameObject->texture->filename);
-
-
 		}
 		break;
 		case (ReplicationAction::Update):
 		{
 			GameObject* newGameObject = App->modLinkingContext->getNetworkGameObject(command.networkId);
 			//Serialize Fields
+
+			float posX = 0;
+			float posY = 0;
+			float angle = 0;
 			if (newGameObject != nullptr) 
 			{
 				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
-				packet << newGameObject->angle;
-				
+				packet << newGameObject->angle;		
+			}
+			else 
+			{
+				packet << posX;
+				packet << posY;
+				packet << angle;
 			}
 
 		}
