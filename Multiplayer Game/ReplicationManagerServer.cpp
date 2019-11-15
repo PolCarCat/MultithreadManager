@@ -91,12 +91,14 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 void ReplicationManagerServer::AddAction(ReplicationAction action, uint32 networkId)
 {
 
-	//for (int i = 0; i < commands.size(); i++) {
-	//	if (commands[i].networkId == networkId) {
-	//		commands[i].action = action;
-	//		return;
-	//	}
-	//}
+	for (int i = 0; i < commands.size(); i++) 
+	{
+		if (commands[i].networkId == networkId) 
+		{
+			commands[i].action = action;		
+			return;
+		}
+	}
 
 	ReplicationCommand newCommand;
 

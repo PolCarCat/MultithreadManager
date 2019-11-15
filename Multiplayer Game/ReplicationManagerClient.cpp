@@ -25,7 +25,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 			else
 			{
 				newGO = Instantiate();
-				App->modLinkingContext->registerNetworkGameObject(newGO);
+				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(newGO, id);
 			}
 
 
@@ -55,6 +55,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 				packet >> go->angle;
 
 			}
+
 
 		}	
 			break;
