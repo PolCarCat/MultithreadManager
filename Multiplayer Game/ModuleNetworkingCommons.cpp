@@ -53,3 +53,8 @@ void unpackInputControllerButtons(uint16 buttonBits, InputController & input)
 		buttonIndex++;
 	}
 }
+
+InputController inputControllerFromInputPacketData(const InputPacketData &inputPacketData, const InputController &previousGamepad)
+{
+
+}
