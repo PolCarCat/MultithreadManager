@@ -13,6 +13,7 @@ public:
 
 class Delivery
 {
+public:
 	uint32 sequenceNumber = 0;
 	double dispatchTime = 0;
 	DeliveryDelegate* delegate = nullptr;
@@ -45,7 +46,7 @@ private:
 	// -A list of pending deliveries
 
 	uint32 nextSeqNumber = 0;
-	std::vector<Delivery> pendingDeliveries;
+	std::vector<Delivery*> pendingDeliveries;
 
 	//Private members reciever side
 	// -Next expeced sequence number
