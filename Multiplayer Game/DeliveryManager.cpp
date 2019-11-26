@@ -60,6 +60,8 @@ void DeliveryManager::ProcessAckdSequenceNumbers(const InputMemoryStream & packe
 			if (pendingDeliveries[i]->sequenceNumber == seqNumber) 
 			{
 				pendingDeliveries[i]->delegate->OnDeliverySuccess(this);
+				pendingDeliveries.erase(pendingDeliveries.begin() + i);
+
 				break;
 
 			}
@@ -69,10 +71,33 @@ void DeliveryManager::ProcessAckdSequenceNumbers(const InputMemoryStream & packe
 
 void DeliveryManager::ProcessTimeOutPackets()
 {
+	std::vector<int> toDelete;
 
+	for (int i = 0; i < pendingDeliveries.size(); i++)
+	{
+		if (Time.time > pendingDeliveries[i]->dispatchTime + PACKET_DELIVERY_TIMEOUT_SECONDS)
+		{
+			toDelete.push_back(i);
+		}
+	}
+
+	for (int i = 0; i < toDelete.size(); i++)
+	{
+		int index = toDelete.size() - i;
+
+		pendingDeliveries[index]->delegate->OnDeliveryFailure(this);
+		pendingDeliveries.erase(pendingDeliveries.begin() + index);
+	}
 }
 
 void DeliveryManager::Clear()
 {
+
+	while (!pendingDeliveries.empty()) delete pendingDeliveries.back(), pendingDeliveries.pop_back();
+
+	pendingAckNumbers.clear();
+
+	nextSeqNumber = 0;
+	nextExpNumber = 0;
 
 }
