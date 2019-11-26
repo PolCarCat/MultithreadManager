@@ -101,3 +101,11 @@ void DeliveryManager::Clear()
 	nextExpNumber = 0;
 
 }
+
+void DeliveryDelegateReplication::OnDeliverySuccess(DeliveryManager * deliveryManager)
+{
+}
+
+void DeliveryDelegateReplication::OnDeliveryFailure(DeliveryManager * deliveryManager)
+{
+}

@@ -180,6 +180,10 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				}
 			}
 		}
+		else if (message == ClientMessage::Ping)
+		{
+			proxy->deliveryManager.ProcessAckdSequenceNumbers(packet);
+		}
 
 		if (proxy != nullptr)
 		{
@@ -198,7 +202,6 @@ void ModuleNetworkingServer::onUpdate()
 			if (clientProxy.connected)
 			{
 
-
 				// TODO(jesus): If the replication interval passed and the replication manager of this proxy
 				//              has pending data, write and send a replication packet to this client.
 
@@ -214,7 +217,7 @@ void ModuleNetworkingServer::onUpdate()
 					sendPacket(packet, clientProxy.address);
 				}
 
-
+				clientProxy.deliveryManager.ProcessTimeOutPackets();
 			}
 		}
 
@@ -244,6 +247,8 @@ void ModuleNetworkingServer::onUpdate()
 					sendPacket(packet, clientProxies[i].address);
 			}
 		}
+
+
 	}
 }
 

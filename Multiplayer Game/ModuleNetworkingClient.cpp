@@ -218,7 +218,15 @@ void ModuleNetworkingClient::onUpdate()
 				secondsSinceLastPing = 0.0f;
 				OutputMemoryStream packet;
 				packet << ClientMessage::Ping;
+
+				if (deliveryManagerClient.HasSequenceNumbersPendingAck())
+				{
+					deliveryManagerClient.WriteSequenceNumbersPendingAck(packet);
+				}
+
 				sendPacket(packet, serverAddress);
+
+
 			}
 		}
 	}
