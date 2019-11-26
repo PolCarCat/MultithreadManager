@@ -130,7 +130,19 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 		// TODO(jesus): Handle incoming messages from server
 		if (message == ServerMessage::Replication)
 		{
-			replicationManager.read(packet);
+			uint32 lasInputSequenceNum = 0;
+			packet >> lasInputSequenceNum;
+			
+			if (deliveryManagerClient.ProccesSequenceNumber(packet))
+			{
+				// Process info from server
+				replicationManager.read(packet);
+
+				// Process old inputs from inputData again
+			}
+
+			if (lasInputSequenceNum > lasInputSequenceNumRecvdByServer)
+				lasInputSequenceNumRecvdByServer = lasInputSequenceNum;
 		}
 
 	}

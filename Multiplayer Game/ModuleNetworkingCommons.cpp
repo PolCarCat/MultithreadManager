@@ -56,5 +56,11 @@ void unpackInputControllerButtons(uint16 buttonBits, InputController & input)
 
 InputController inputControllerFromInputPacketData(const InputPacketData &inputPacketData, const InputController &previousGamepad)
 {
+	InputController gamepad = previousGamepad;
 
+	gamepad.horizontalAxis = inputPacketData.horizontalAxis;
+	gamepad.verticalAxis = inputPacketData.verticalAxis;
+	unpackInputControllerButtons(inputPacketData.buttonBits, gamepad);
+
+	return gamepad;
 }

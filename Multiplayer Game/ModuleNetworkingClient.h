@@ -71,6 +71,7 @@ private:
 	InputPacketData inputData[MAX_INPUT_DATA_SIMULTANEOUS_PACKETS];
 	uint32 inputDataFront = 0;
 	uint32 inputDataBack = 0;
+	uint32 lasInputSequenceNumRecvdByServer = 0;
 
 	float inputDeliveryIntervalSeconds = 0.05f;
 	float secondsSinceLastInputDelivery = 0.0f;
