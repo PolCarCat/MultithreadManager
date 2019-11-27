@@ -21,8 +21,6 @@ public:
 	void OnDeliverySuccess(DeliveryManager* deliveryManager) override;
 	void OnDeliveryFailure(DeliveryManager* deliveryManager) override;
 
-
-
 };
 
 class Delivery

@@ -219,6 +219,7 @@ void ModuleNetworkingClient::onUpdate()
 				OutputMemoryStream packet;
 				packet << ClientMessage::Ping;
 
+				//MMMMMMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEHHHHHHHHHHHHHHHHHHHHHH------------------------------------------------------------------------------------------------
 				if (deliveryManagerClient.HasSequenceNumbersPendingAck())
 				{
 					deliveryManagerClient.WriteSequenceNumbersPendingAck(packet);

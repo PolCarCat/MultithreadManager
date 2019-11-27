@@ -182,6 +182,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 		}
 		else if (message == ClientMessage::Ping)
 		{
+			//MMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-------------------------------------------------------------
 			proxy->deliveryManager.ProcessAckdSequenceNumbers(packet);
 		}
 
@@ -217,7 +218,8 @@ void ModuleNetworkingServer::onUpdate()
 					sendPacket(packet, clientProxy.address);
 				}
 
-				clientProxy.deliveryManager.ProcessTimeOutPackets(clientProxy.replicationManager.GetCommands());
+
+				clientProxy.deliveryManager.ProcessTimeOutPackets();
 			}
 		}
 
