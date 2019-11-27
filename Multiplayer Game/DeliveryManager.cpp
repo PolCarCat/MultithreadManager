@@ -69,6 +69,8 @@ void DeliveryManager::ProcessAckdSequenceNumbers(const InputMemoryStream & packe
 	}
 }
 
+
+
 void DeliveryManager::ProcessTimeOutPackets()
 {
 	std::vector<int> toDelete;
@@ -80,6 +82,7 @@ void DeliveryManager::ProcessTimeOutPackets()
 			toDelete.push_back(i);
 		}
 	}
+
 
 	for (int i = 0; i < toDelete.size(); i++)
 	{
@@ -104,8 +107,15 @@ void DeliveryManager::Clear()
 
 void DeliveryDelegateReplication::OnDeliverySuccess(DeliveryManager * deliveryManager)
 {
+
 }
 
 void DeliveryDelegateReplication::OnDeliveryFailure(DeliveryManager * deliveryManager)
 {
+	
+}
+
+void DeliveryDelegate::AddCommands(std::vector<ReplicationCommand> c)
+{
+	commands.insert(commands.end(), c.begin(), c.end());
 }

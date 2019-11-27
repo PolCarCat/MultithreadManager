@@ -2,13 +2,16 @@
 
 
 class DeliveryManager;
+class ReplicationCommand;
 
 class DeliveryDelegate
 {
 public:
 	virtual void OnDeliverySuccess(DeliveryManager* deliveryManager) = 0;
 	virtual void OnDeliveryFailure(DeliveryManager* deliveryManager) = 0;
+	void AddCommands(std::vector<ReplicationCommand> c);
 
+	std::vector<ReplicationCommand> commands;
 };
 
 
@@ -17,6 +20,7 @@ class DeliveryDelegateReplication : public DeliveryDelegate
 public:
 	void OnDeliverySuccess(DeliveryManager* deliveryManager) override;
 	void OnDeliveryFailure(DeliveryManager* deliveryManager) override;
+
 
 
 };

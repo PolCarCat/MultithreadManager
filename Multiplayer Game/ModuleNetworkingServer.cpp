@@ -217,7 +217,7 @@ void ModuleNetworkingServer::onUpdate()
 					sendPacket(packet, clientProxy.address);
 				}
 
-				clientProxy.deliveryManager.ProcessTimeOutPackets();
+				clientProxy.deliveryManager.ProcessTimeOutPackets(clientProxy.replicationManager.GetCommands());
 			}
 		}
 

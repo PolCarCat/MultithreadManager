@@ -86,6 +86,11 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 	commands.clear();
 }
 
+std::vector<ReplicationCommand> ReplicationManagerServer::GetCommands()
+{
+	return commands;
+}
+
 
 
 void ReplicationManagerServer::AddAction(ReplicationAction action, uint32 networkId)

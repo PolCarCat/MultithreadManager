@@ -25,6 +25,8 @@ public:
 
 	int CommandsSize() { return commands.size();  };
 
+	std::vector<ReplicationCommand> GetCommands();
+
 private:
 	std::vector<ReplicationCommand> commands;
 
