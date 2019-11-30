@@ -51,6 +51,7 @@ bool ModuleGameObject::update()
 			if (gameObject.behaviour != nullptr)
 				gameObject.behaviour->update();
 		}
+
 	}
 
 	return true;
@@ -58,6 +59,15 @@ bool ModuleGameObject::update()
 
 bool ModuleGameObject::postUpdate()
 {
+	for (GameObject &gameObject : gameObjects)
+	{
+
+		if (gameObject.toDisconnect)
+		{
+			App->modNetServer->KickProxy(&gameObject);
+
+		}
+	}
 	return true;
 }
 

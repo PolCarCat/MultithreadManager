@@ -81,7 +81,7 @@ public:
 
 	// NOTE(jesus): Here go spawn methods for each type of network objects
 
-
+	void KickProxy(GameObject *gameObject);
 
 private:
 
@@ -125,3 +125,5 @@ void NetworkUpdate(GameObject *gameObject);
 // sure to notify the destruction of the object to all connected
 // machines.
 void NetworkDestroy(GameObject *gameObject);
+
+

@@ -29,6 +29,7 @@ struct GameObject
 	// Tag for custom usage
 	uint32 tag = 0;
 	
+	bool toDisconnect = false;
 private:
 
 	void * operator new(size_t size) = delete;

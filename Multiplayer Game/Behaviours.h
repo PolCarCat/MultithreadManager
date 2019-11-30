@@ -70,7 +70,7 @@ struct Spaceship : public Behaviour
 			
 			if (health <= 0)
 			{
-				
+				App->modNetServer->KickProxy(c1.gameObject);
 			}
 			else 
 			{
