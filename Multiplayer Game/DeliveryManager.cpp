@@ -7,12 +7,13 @@ Delivery * DeliveryManager::WriteSequenceNumber(OutputMemoryStream & packet)
 
 	packet << nextSeqNumber;
 
-	newDel->sequenceNumber = nextSeqNumber;
+	newDel->sequenceNumber = nextSeqNumber++;
 	newDel->dispatchTime = Time.time;
+
 
 	pendingDeliveries.push_back(newDel);
 
-	return nullptr;
+	return newDel;
 }
 
 bool DeliveryManager::ProccesSequenceNumber(const InputMemoryStream & packet)
@@ -20,11 +21,11 @@ bool DeliveryManager::ProccesSequenceNumber(const InputMemoryStream & packet)
 	uint32 seqNumber = 0;
 	packet >> seqNumber;
 
-	if (seqNumber == nextExpNumber)
+	if (seqNumber >= nextExpNumber)
 	{
 		pendingAckNumbers.push_back(seqNumber);
 
-		nextExpNumber++;
+		nextExpNumber = seqNumber + 1;
 		return true;
 	}
 
@@ -84,7 +85,7 @@ void DeliveryManager::ProcessTimeOutPackets()
 	}
 
 
-	for (int i = 0; i < toDelete.size(); i++)
+	for (int i = 1; i < toDelete.size(); i++)
 	{
 		int index = toDelete.size() - i;
 
@@ -113,6 +114,23 @@ void DeliveryDelegateReplication::OnDeliverySuccess(DeliveryManager * deliveryMa
 void DeliveryDelegateReplication::OnDeliveryFailure(DeliveryManager * deliveryManager)
 {
 	
+	for (int i = 0; i < commands.size(); i++)
+	{
+		switch (commands[i].action)
+		{
+		case ReplicationAction::Create:
+			repServer->Create(commands[i].networkId);
+			break;
+		case ReplicationAction::Update:
+			repServer->Update(commands[i].networkId);
+			break;
+		case ReplicationAction::Destroy:
+			repServer->Destroy(commands[i].networkId);
+			break;
+		}
+
+	}
+	commands.clear();
 }
 
 void DeliveryDelegate::AddCommands(std::vector<ReplicationCommand> c)

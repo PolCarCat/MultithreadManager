@@ -27,10 +27,12 @@ public:
 
 	std::vector<ReplicationCommand> GetCommands();
 
+	void AddAction(ReplicationAction action, uint32 networkId);
+
 private:
 	std::vector<ReplicationCommand> commands;
 
-	void AddAction(ReplicationAction action, uint32 networkId);
+
 	bool CheckId(uint32 networkId);
 
 };

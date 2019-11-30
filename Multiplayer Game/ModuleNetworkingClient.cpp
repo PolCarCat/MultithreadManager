@@ -141,9 +141,17 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 				// Process old inputs from inputData again
 			}
 
+
 			if (lasInputSequenceNum > lasInputSequenceNumRecvdByServer)
 				lasInputSequenceNumRecvdByServer = lasInputSequenceNum;
 		}
+		else if (message == ServerMessage::Ping)
+		{
+
+			packet >> inputDataFront;
+
+		}
+
 
 	}
 }
@@ -172,7 +180,7 @@ void ModuleNetworkingClient::onUpdate()
 	{
 		secondsSinceLastInputDelivery += Time.deltaTime;
 
-		if (inputDataBack - inputDataFront < ArrayCount(inputData))
+		if ((inputDataBack - inputDataFront) < ArrayCount(inputData))
 		{
 			uint32 currentInputData = inputDataBack++;
 			InputPacketData &inputPacketData = inputData[currentInputData % ArrayCount(inputData)];
@@ -199,36 +207,36 @@ void ModuleNetworkingClient::onUpdate()
 				}
 
 				// Clear the queue
-				inputDataFront = inputDataBack;
+				//inputDataFront = inputDataBack;
 
 				sendPacket(packet, serverAddress);
 			}
+		}
 
-			// Disconnect from Server if timeout
-			if (Time.time >= lastPacketReceivedTime + DISCONNECT_TIMEOUT_SECONDS)
+		// Disconnect from Server if timeout
+		if (Time.time >= lastPacketReceivedTime + DISCONNECT_TIMEOUT_SECONDS)
+		{
+			WLOG("Conexion timeout. Disconnecting from server.");
+			disconnect();
+		}
+
+		// Send pings periodically to server
+		secondsSinceLastPing += Time.deltaTime;
+		if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
+		{
+			secondsSinceLastPing = 0.0f;
+			OutputMemoryStream packet;
+			packet << ClientMessage::Ping;
+
+
+			if (deliveryManagerClient.HasSequenceNumbersPendingAck())
 			{
-				WLOG("Conexion timeout. Disconnecting from server.");
-				disconnect();
+				deliveryManagerClient.WriteSequenceNumbersPendingAck(packet);
 			}
 
-			// Send pings periodically to server
-			secondsSinceLastPing += Time.deltaTime;
-			if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
-			{
-				secondsSinceLastPing = 0.0f;
-				OutputMemoryStream packet;
-				packet << ClientMessage::Ping;
-
-				//MMMMMMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEHHHHHHHHHHHHHHHHHHHHHH------------------------------------------------------------------------------------------------
-				if (deliveryManagerClient.HasSequenceNumbersPendingAck())
-				{
-					deliveryManagerClient.WriteSequenceNumbersPendingAck(packet);
-				}
-
-				sendPacket(packet, serverAddress);
+			sendPacket(packet, serverAddress);
 
 
-			}
 		}
 	}
 

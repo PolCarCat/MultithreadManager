@@ -3,6 +3,7 @@
 
 class DeliveryManager;
 class ReplicationCommand;
+class ReplicationManagerServer;
 
 class DeliveryDelegate
 {
@@ -12,6 +13,8 @@ public:
 	void AddCommands(std::vector<ReplicationCommand> c);
 
 	std::vector<ReplicationCommand> commands;
+
+	ReplicationManagerServer* repServer;
 };
 
 
@@ -20,6 +23,7 @@ class DeliveryDelegateReplication : public DeliveryDelegate
 public:
 	void OnDeliverySuccess(DeliveryManager* deliveryManager) override;
 	void OnDeliveryFailure(DeliveryManager* deliveryManager) override;
+
 
 };
 

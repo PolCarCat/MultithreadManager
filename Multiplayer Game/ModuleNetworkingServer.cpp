@@ -182,7 +182,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 		}
 		else if (message == ClientMessage::Ping)
 		{
-			//MMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-------------------------------------------------------------
+			
 			proxy->deliveryManager.ProcessAckdSequenceNumbers(packet);
 		}
 
@@ -213,6 +213,15 @@ void ModuleNetworkingServer::onUpdate()
 					OutputMemoryStream packet;
 					packet << ServerMessage::Replication;
 
+					packet << clientProxy.nextExpectedInputSequenceNumber;
+
+					Delivery* newDel = nullptr;
+					newDel = clientProxy.deliveryManager.WriteSequenceNumber(packet);
+					 
+					newDel->delegate = new DeliveryDelegateReplication();
+					newDel->delegate->AddCommands(clientProxy.replicationManager.GetCommands());
+					newDel->delegate->repServer = &clientProxy.replicationManager;
+
 					clientProxy.secondsSinceLastReplication = 0;
 					clientProxy.replicationManager.write(packet);
 					sendPacket(packet, clientProxy.address);
@@ -241,12 +250,18 @@ void ModuleNetworkingServer::onUpdate()
 		if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
 		{
 			secondsSinceLastPing = 0.0f;
-			OutputMemoryStream packet;
-			packet << ServerMessage::Ping;
+
 			for (int i = 0; i < MAX_CLIENTS; ++i)
 			{
 				if (clientProxies[i].connected)
+				{
+					OutputMemoryStream packet;
+					packet << ServerMessage::Ping;
+
+					packet << clientProxies[i].nextExpectedInputSequenceNumber;
 					sendPacket(packet, clientProxies[i].address);
+				}
+
 			}
 		}
 
