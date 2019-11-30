@@ -3,6 +3,7 @@
 
 void ReplicationManagerServer::Create(uint32 networkId)
 {
+	if (!CheckId(networkId))
 	AddAction(ReplicationAction::Create, networkId);
 
 }
@@ -69,6 +70,11 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
 				packet << newGameObject->angle;		
+
+				packet << newGameObject->size.x;
+				packet << newGameObject->size.y;
+
+
 			}
 
 		}

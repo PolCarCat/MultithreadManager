@@ -15,6 +15,14 @@ struct Behaviour
 
 struct Spaceship : public Behaviour
 {
+	int initialHealth = 100;
+	int health = initialHealth;
+
+	float size = 100.0f;
+	float minsize = 10.0f;
+
+	float speed = 200.0f;
+
 	void start() override
 	{
 		gameObject->tag = (uint32)(Random.next() * UINT_MAX);
@@ -53,6 +61,23 @@ struct Spaceship : public Behaviour
 			// Be careful, if you do NetworkDestroy(gameObject) directly,
 			// the client proxy will poing to an invalid gameObject...
 			// instead, make the gameObject invisible or disconnect the client.
+
+			health -= 10;
+			float ratio = ((float)initialHealth - (float)health) / (float)initialHealth;
+
+			c1.gameObject->size.x = size - ((size - minsize) * ratio);
+			c1.gameObject->size.y = size - ((size - minsize) * ratio);
+			
+			if (health <= 0)
+			{
+				
+			}
+			else 
+			{
+				NetworkUpdate(c1.gameObject);
+			}
+
+			
 		}
 	}
 };
