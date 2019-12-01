@@ -1,4 +1,33 @@
 #include "Networks.h"
+#include "ModuleGameObject.h"
+
+void GameObject::ResetPos(vec2 newpos, float newangle)
+{
+	initial_position = position;
+	final_position = newpos;
+
+	initial_angle = angle;
+	final_angle = newangle;
+
+	total_elapsed = seconds_elapsed;
+	time_left = total_elapsed;
+	seconds_elapsed = 0;
+
+}
+
+void GameObject::Interpolate()
+{
+	vec2 dif = final_position - initial_position;
+	time_left -= Time.deltaTime;
+	float ratio = time_left / total_elapsed;
+
+	if (ratio > 1) {
+		interpolate = false;
+	}
+
+	position = initial_position + (dif * ratio);
+	angle = angle + (angle * ratio);
+}
 
 void GameObject::releaseComponents()
 {
@@ -48,8 +77,13 @@ bool ModuleGameObject::update()
 	{
 		if (gameObject.state == GameObject::UPDATING)
 		{
-			if (gameObject.behaviour != nullptr)
+			if (gameObject.behaviour != nullptr && gameObject.behaviour->isServer)
 				gameObject.behaviour->update();
+			else if (gameObject.interpolate)
+			{
+				gameObject.seconds_elapsed += Time.deltaTime;
+				gameObject.Interpolate();
+			}
 		}
 
 	}

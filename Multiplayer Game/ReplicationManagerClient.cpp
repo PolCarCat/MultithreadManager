@@ -54,13 +54,19 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet, uint32 cli
 			if (go != nullptr) 
 			{
 				//packet >> go->tag;
-				packet >> go->position.x;
-				packet >> go->position.y;
-				packet >> go->angle;
+
+				vec2 pos = { 0.0f, 0.0f };
+				float angle = 0.0f;
+
+				packet >> pos.x;
+				packet >> pos.y;
+				packet >> angle;
 
 				//The health of the others players it's represented in the size 
 				packet >> go->size.x;
 				packet >> go->size.y;
+
+				go->ResetPos(pos, angle);
 
 			}
 

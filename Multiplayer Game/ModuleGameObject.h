@@ -3,6 +3,18 @@
 struct GameObject
 {
 	// Transform component
+	vec2 initial_position = vec2{ 0.0f, 0.0f };
+	float initial_angle = 0.0f;
+
+	vec2 final_position = vec2{ 0.0f, 0.0f };
+	float final_angle = 0.0f;
+
+	float seconds_elapsed = 0.0f;
+	float total_elapsed = 0.0f;
+	float time_left = 0.0f;
+
+	bool interpolate = false;
+
 	vec2 position = vec2{ 0.0f, 0.0f };
 
 	// Render component
@@ -30,6 +42,9 @@ struct GameObject
 	uint32 tag = 0;
 	
 	bool toDisconnect = false;
+
+	void ResetPos(vec2 pos, float angle);
+	void Interpolate();
 private:
 
 	void * operator new(size_t size) = delete;
