@@ -3,6 +3,7 @@
 struct Behaviour
 {
 	GameObject *gameObject = nullptr;
+
 	bool isServer = true;
 
 	virtual void start() { }
@@ -96,7 +97,8 @@ struct Laser : public Behaviour
 
 		secondsSinceCreation += Time.deltaTime;
 
-		NetworkUpdate(gameObject);
+		if (isServer)
+			NetworkUpdate(gameObject);
 
 		const float lifetimeSeconds = 2.0f;
 		if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);

@@ -81,8 +81,6 @@ void ModuleNetworkingClient::onGui()
 			ImGui::Text(" - Type: %u", spaceshipType);
 			ImGui::Text(" - Network id: %u", networkId);
 
-		
-
 			vec2 playerPosition = {};
 			GameObject *playerGameObject = App->modLinkingContext->getNetworkGameObject(networkId);
 			if (playerGameObject != nullptr) {
@@ -141,21 +139,16 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 				replicationManager.read(packet);
 
 				// Process old inputs from inputData again
-				//processPastInputs();
+				processPastInputs();
 			}
-
 
 			if (lasInputSequenceNum > lasInputSequenceNumRecvdByServer)
 				lasInputSequenceNumRecvdByServer = lasInputSequenceNum;
 		}
 		else if (message == ServerMessage::Ping)
 		{
-
 			packet >> inputDataFront;
-
 		}
-
-
 	}
 }
 
@@ -281,11 +274,17 @@ void ModuleNetworkingClient::onDisconnect()
 
 void ModuleNetworkingClient::processPastInputs()
 {
+	GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId);
+	InputController input;
+
 	if (inputDataBack - inputDataFront < ArrayCount(inputData))
 	{
 		for (uint32 i = inputDataFront; i < inputDataBack; ++i)
 		{
-
+			InputPacketData &inputPacketData = inputData[i % ArrayCount(inputData)];
+			inputControllerFromInputPacketData(inputPacketData, input);
+			if (playerGO->behaviour)
+				playerGO->behaviour->onInput(input);
 		}
 	}
 }
