@@ -6,29 +6,33 @@ void GameObject::ResetPos(vec2 newpos, float newangle)
 	initial_position = position;
 	final_position = newpos;
 
-	initial_angle = angle;
-	final_angle = newangle;
+	//initial_angle = angle;
+	//final_angle = newangle;
+
+	angle = newangle;
 
 	total_elapsed = seconds_elapsed;
 	time_left = total_elapsed;
 	seconds_elapsed = 0;
 
-	interpolate = false;
+	interpolate = true;
 }
 
 void GameObject::Interpolate()
 {
-	vec2 dif = final_position - initial_position;
+	vec2 dif = initial_position - final_position;
 	time_left -= Time.deltaTime;
-	float ratio = time_left / total_elapsed;
 
-	if (time_left > 0) {
+	if (time_left > 0) time_left = 0;
+
+	float ratio = total_elapsed - (time_left / total_elapsed);
+
+	if (time_left <= 0) {
 		interpolate = false;
-		return;
 	}
 
 	position = initial_position + (dif * ratio);
-	angle = angle + (angle * ratio);
+	//angle = initial_angle + (final_angle * ratio);
 }
 
 void GameObject::releaseComponents()
@@ -86,9 +90,11 @@ bool ModuleGameObject::update()
 			}
 			if (gameObject.interpolate)
 			{
-				gameObject.seconds_elapsed += Time.deltaTime;
+
 				gameObject.Interpolate();
 			}
+
+			gameObject.seconds_elapsed += Time.deltaTime;
 		}
 
 	}

@@ -70,7 +70,16 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet, uint32 cli
 				packet >> go->size.x;
 				packet >> go->size.y;
 
-				go->ResetPos(pos, angle);
+				if (id != clientNetID)
+				{
+					go->ResetPos(pos, angle);
+				}
+				else 
+				{
+					go->position = pos;
+					go->angle = angle;
+				}
+
 
 			}
 
