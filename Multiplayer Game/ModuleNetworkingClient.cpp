@@ -81,6 +81,8 @@ void ModuleNetworkingClient::onGui()
 			ImGui::Text(" - Type: %u", spaceshipType);
 			ImGui::Text(" - Network id: %u", networkId);
 
+		
+
 			vec2 playerPosition = {};
 			GameObject *playerGameObject = App->modLinkingContext->getNetworkGameObject(networkId);
 			if (playerGameObject != nullptr) {

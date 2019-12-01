@@ -182,8 +182,11 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 		}
 		else if (message == ClientMessage::Ping)
 		{
-			
-			proxy->deliveryManager.ProcessAckdSequenceNumbers(packet);
+
+			if (proxy != nullptr)
+			{
+				proxy->deliveryManager.ProcessAckdSequenceNumbers(packet);
+			}
 		}
 
 		if (proxy != nullptr)
@@ -229,6 +232,8 @@ void ModuleNetworkingServer::onUpdate()
 
 
 				clientProxy.deliveryManager.ProcessTimeOutPackets();
+
+
 			}
 		}
 
@@ -436,6 +441,21 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
 	return gameObject;
 }
 
+void ModuleNetworkingServer::KickProxy(GameObject * gameObject)
+{
+
+	NetworkDestroy(gameObject);
+	for (ClientProxy &clientProxy : clientProxies)
+	{
+		if (clientProxy.gameObject == gameObject)
+		{
+			destroyClientProxy(&clientProxy);
+			break;
+		}
+	}
+
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // Update / destruction
@@ -491,3 +511,5 @@ void NetworkDestroy(GameObject * gameObject)
 
 	App->modNetServer->destroyNetworkObject(gameObject);
 }
+
+

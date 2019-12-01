@@ -17,12 +17,9 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 		{
 		case ReplicationAction::Create:
 		{
-			GameObject* newGO = nullptr;
-			if (App->modLinkingContext->getNetworkGameObject(id)) 
-			{
-				newGO = App->modLinkingContext->getNetworkGameObject(id);
-			}
-			else
+			GameObject* newGO = App->modLinkingContext->getNetworkGameObject(id);
+
+			if (!newGO)
 			{
 				newGO = Instantiate();
 				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(newGO, id);
@@ -53,6 +50,10 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet)
 				packet >> go->position.x;
 				packet >> go->position.y;
 				packet >> go->angle;
+
+				//The health of the others players it's represented in the size 
+				packet >> go->size.x;
+				packet >> go->size.y;
 
 			}
 
