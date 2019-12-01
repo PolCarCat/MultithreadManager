@@ -36,6 +36,8 @@ private:
 
 	void onDisconnect() override;
 
+	void processPastInputs();
+
 	ReplicationManagerClient replicationManager;
 	DeliveryManager deliveryManagerClient;
 

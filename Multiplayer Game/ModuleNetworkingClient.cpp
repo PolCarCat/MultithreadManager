@@ -139,6 +139,7 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 				replicationManager.read(packet);
 
 				// Process old inputs from inputData again
+				//processPastInputs();
 			}
 
 
@@ -180,6 +181,12 @@ void ModuleNetworkingClient::onUpdate()
 	{
 		secondsSinceLastInputDelivery += Time.deltaTime;
 
+		// Client side prediction
+		GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId);
+		if (playerGO && playerGO->behaviour)
+			playerGO->behaviour->onInput(Input);
+
+		// Send input to server
 		if ((inputDataBack - inputDataFront) < ArrayCount(inputData))
 		{
 			uint32 currentInputData = inputDataBack++;
@@ -235,8 +242,6 @@ void ModuleNetworkingClient::onUpdate()
 			}
 
 			sendPacket(packet, serverAddress);
-
-
 		}
 	}
 
@@ -270,4 +275,15 @@ void ModuleNetworkingClient::onDisconnect()
 	}
 
 	App->modRender->cameraPosition = {};
+}
+
+void ModuleNetworkingClient::processPastInputs()
+{
+	if (inputDataBack - inputDataFront < ArrayCount(inputData))
+	{
+		for (uint32 i = inputDataFront; i < inputDataBack; ++i)
+		{
+
+		}
+	}
 }
