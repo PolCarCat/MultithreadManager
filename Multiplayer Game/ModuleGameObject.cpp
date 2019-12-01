@@ -20,12 +20,24 @@ void GameObject::ResetPos(vec2 newpos, float newangle)
 
 void GameObject::Interpolate()
 {
-	vec2 dif = initial_position - final_position;
+	vec2 dif = final_position - initial_position;
+
+
 	time_left -= Time.deltaTime;
 
-	if (time_left > 0) time_left = 0;
+	if (time_left < 0) time_left = 0;
 
-	float ratio = total_elapsed - (time_left / total_elapsed);
+	float ratio = 0.0f;
+
+	if (total_elapsed > 0)
+	{
+		ratio = (total_elapsed - time_left) / total_elapsed;
+	}
+	else
+	{
+		ratio = 1.0f;
+		interpolate = false;
+	}
 
 	if (time_left <= 0) {
 		interpolate = false;
@@ -90,11 +102,11 @@ bool ModuleGameObject::update()
 			}
 			if (gameObject.interpolate)
 			{
-
+				gameObject.seconds_elapsed += Time.deltaTime;
 				gameObject.Interpolate();
 			}
 
-			gameObject.seconds_elapsed += Time.deltaTime;
+			
 		}
 
 	}

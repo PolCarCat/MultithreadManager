@@ -74,8 +74,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet, uint32 cli
 				{
 					go->ResetPos(pos, angle);
 				}
-				else 
-				{
+				else {
 					go->position = pos;
 					go->angle = angle;
 				}
