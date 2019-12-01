@@ -48,7 +48,7 @@ struct Spaceship : public Behaviour
 				NetworkUpdate(gameObject);
 		}
 
-		if (input.actionLeft == ButtonState::Press)
+		if (input.actionLeft == ButtonState::Press && isServer)
 		{
 			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
 			laser->tag = gameObject->tag;

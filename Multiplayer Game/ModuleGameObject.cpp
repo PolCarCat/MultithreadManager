@@ -13,6 +13,7 @@ void GameObject::ResetPos(vec2 newpos, float newangle)
 	time_left = total_elapsed;
 	seconds_elapsed = 0;
 
+	interpolate = false;
 }
 
 void GameObject::Interpolate()
@@ -21,8 +22,9 @@ void GameObject::Interpolate()
 	time_left -= Time.deltaTime;
 	float ratio = time_left / total_elapsed;
 
-	if (ratio > 1) {
+	if (time_left > 0) {
 		interpolate = false;
+		return;
 	}
 
 	position = initial_position + (dif * ratio);
@@ -77,9 +79,12 @@ bool ModuleGameObject::update()
 	{
 		if (gameObject.state == GameObject::UPDATING)
 		{
-			if (gameObject.behaviour != nullptr && gameObject.behaviour->isServer)
+			if (gameObject.behaviour != nullptr )
+			{
 				gameObject.behaviour->update();
-			else if (gameObject.interpolate)
+
+			}
+			if (gameObject.interpolate)
 			{
 				gameObject.seconds_elapsed += Time.deltaTime;
 				gameObject.Interpolate();

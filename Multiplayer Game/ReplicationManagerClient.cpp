@@ -32,6 +32,10 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet, uint32 cli
 				behavior->isServer = false;
 				newGO->behaviour = behavior;
 			}
+			else {
+				newGO->behaviour = new Behaviour();
+				newGO->behaviour->isServer = false;
+			}
 
 			//packet >> newGO->tag;
 			packet >> newGO->position.x;
