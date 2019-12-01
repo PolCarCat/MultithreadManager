@@ -136,7 +136,7 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 			if (deliveryManagerClient.ProccesSequenceNumber(packet))
 			{
 				// Process info from server
-				replicationManager.read(packet);
+				replicationManager.read(packet, networkId);
 
 				// Process old inputs from inputData again
 				processPastInputs();
