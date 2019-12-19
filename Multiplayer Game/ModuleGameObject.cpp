@@ -6,8 +6,8 @@ void GameObject::ResetPos(vec2 newpos, float newangle)
 	initial_position = position;
 	final_position = newpos;
 
-	//initial_angle = angle;
-	//final_angle = newangle;
+	initial_angle = angle;
+	final_angle = newangle;
 
 	angle = newangle;
 
@@ -21,9 +21,6 @@ void GameObject::ResetPos(vec2 newpos, float newangle)
 void GameObject::Interpolate()
 {
 	vec2 dif = final_position - initial_position;
-
-
-	time_left -= Time.deltaTime;
 
 	if (time_left < 0) time_left = 0;
 
@@ -44,7 +41,17 @@ void GameObject::Interpolate()
 	}
 
 	position = initial_position + (dif * ratio);
-	//angle = initial_angle + (final_angle * ratio);
+
+	float delta_theta = delta_theta = 180.0 - fabs(fmod(fabs(final_angle - initial_angle), 2 * 180.0) - 180.0);
+	
+	if (final_angle < initial_angle) delta_theta = -delta_theta;
+	
+		
+
+
+	angle = initial_angle + (delta_theta * ratio);
+
+	time_left -= Time.deltaTime;
 }
 
 void GameObject::releaseComponents()
