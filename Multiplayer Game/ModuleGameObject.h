@@ -45,6 +45,7 @@ struct GameObject
 
 	void ResetPos(vec2 pos, float angle);
 	void Interpolate();
+
 private:
 
 	void * operator new(size_t size) = delete;

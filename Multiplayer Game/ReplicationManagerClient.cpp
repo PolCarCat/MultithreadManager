@@ -37,6 +37,15 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet, uint32 cli
 				newGO->behaviour->isServer = false;
 			}
 
+			Behaviour::BehaviourType type;
+			packet >> type;
+
+			if (type == Behaviour::BehaviourType::BULLET) {
+				newGO->behaviour = new Laser();
+				newGO->behaviour->gameObject = newGO;
+				newGO->behaviour->isServer = false;
+			}
+
 			//packet >> newGO->tag;
 			packet >> newGO->position.x;
 			packet >> newGO->position.y;

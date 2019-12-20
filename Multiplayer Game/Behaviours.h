@@ -2,6 +2,14 @@
 
 struct Behaviour
 {
+public:
+	enum BehaviourType {
+		SPACESHIP,
+		BULLET,
+		NONE
+	};
+
+	BehaviourType type = BehaviourType::NONE;
 	GameObject *gameObject = nullptr;
 
 	bool isServer = true;
@@ -17,6 +25,7 @@ struct Behaviour
 
 struct Spaceship : public Behaviour
 {
+
 	int initialHealth = 100;
 	int health = initialHealth;
 
@@ -24,6 +33,10 @@ struct Spaceship : public Behaviour
 	float minsize = 10.0f;
 
 	float speed = 200.0f;
+
+	Spaceship() {
+		type = SPACESHIP;
+	}
 
 	void start() override
 	{
@@ -90,6 +103,10 @@ struct Laser : public Behaviour
 {
 	float secondsSinceCreation = 0.0f;
 
+	Laser() {
+		type = BULLET;
+	}
+
 	void update() override
 	{
 		const float pixelsPerSecond = 1000.0f;
@@ -101,6 +118,6 @@ struct Laser : public Behaviour
 			NetworkUpdate(gameObject);
 
 		const float lifetimeSeconds = 2.0f;
-		if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);
+		if (secondsSinceCreation > lifetimeSeconds && isServer) NetworkDestroy(gameObject);
 	}
 };

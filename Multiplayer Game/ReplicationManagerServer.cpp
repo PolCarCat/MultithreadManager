@@ -42,6 +42,11 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 				packet << command.action;
 				packet << command.networkId;
 
+				bool isBullet = false;
+
+				
+				packet << newGameObject->behaviour->type;
+
 				//packet << newGameObject->tag;
 				packet << newGameObject->position.x;
 				packet << newGameObject->position.y;
