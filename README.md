@@ -1,10 +1,10 @@
 Pol Carrera
 Albert Mas
 
-GAME DESCRIPTION
-Choose between team fish and team robot and fight in the sea war for the ocean dominance!
+SEA WAR - GAME DESCRIPTION
+Choose between team fish and team robot, and fight in the great Sea war for the ocean dominance!
 The game is very simple, the smaller you are the less health you have,
-if you lose all your health the server will kick you.
+if you lose all your health, you die and the server will kick you.
 You can shoot the other players to kill them.
 
 CONTROLS
@@ -22,4 +22,4 @@ Interpolation:		Pol
 Game mechanics:		Pol
 
 
-There is a bug when the client creates a game object and loss the packet the game crashes
+There is a bug when the client creates a game object and the packet is lost, the game crashes.
