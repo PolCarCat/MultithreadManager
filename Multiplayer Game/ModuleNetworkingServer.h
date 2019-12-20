@@ -2,6 +2,8 @@
 
 #include "ModuleNetworking.h"
 
+class Behaviour;
+
 class ModuleNetworkingServer : public ModuleNetworking
 {
 public:
@@ -75,7 +77,7 @@ public:
 	// Spawning network objects
 	//////////////////////////////////////////////////////////////////////
 
-	GameObject * spawnPlayer(ClientProxy &clientProxy, uint8 spaceshipType);
+	GameObject * spawnPlayer(ClientProxy &clientProxy, uint8 spaceshipType, uint8 team);
 
 	GameObject * spawnBullet(GameObject *parent);
 

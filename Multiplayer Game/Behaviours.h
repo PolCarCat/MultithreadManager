@@ -9,11 +9,22 @@ public:
 		NONE
 	};
 
+	enum Team {
+		FISH,
+		ROBOT,
+	};
+
 	BehaviourType type = BehaviourType::NONE;
+	Team team;
+
+
 	GameObject *gameObject = nullptr;
 
 	bool isServer = true;
 
+	Behaviour(Team t) {
+		team = t;
+	}
 	virtual void start() { }
 
 	virtual void update() { }
@@ -34,8 +45,9 @@ struct Spaceship : public Behaviour
 
 	float speed = 200.0f;
 
-	Spaceship() {
+	Spaceship(Team t):Behaviour(t) {
 		type = SPACESHIP;
+		team = t;
 	}
 
 	void start() override
@@ -70,7 +82,7 @@ struct Spaceship : public Behaviour
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override
 	{
-		if (c2.type == ColliderType::Laser && c2.gameObject->tag != gameObject->tag)
+		if (c2.type == ColliderType::Laser && c2.gameObject->tag != gameObject->tag && c2.gameObject->behaviour->team != gameObject->behaviour->team)
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 
@@ -103,8 +115,9 @@ struct Laser : public Behaviour
 {
 	float secondsSinceCreation = 0.0f;
 
-	Laser() {
+	Laser(Team t) :Behaviour(t) {
 		type = BULLET;
+		t;
 	}
 
 	void update() override
