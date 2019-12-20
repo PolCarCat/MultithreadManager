@@ -52,6 +52,12 @@ void ScreenMainMenu::gui()
 	static const char* teamStr = teams[0];
 	static uint8 team = 0;
 
+	const char* fishTypes[] = { "Salmon", "Pupperfish", "Tuna" };
+	const char* robotTypes[] = { "Destroyer", "Submarine" };
+
+	static const char* spaceshipTypeStr = fishTypes[0];
+	static uint8 spaceshipType = 0;
+
 	if (ImGui::BeginCombo("Team##combo", teamStr)) // The second parameter is the label previewed before opening the combo.
 	{
 		for (uint8 i = 0; i < IM_ARRAYSIZE(teams); i++)
@@ -61,6 +67,11 @@ void ScreenMainMenu::gui()
 			{
 				teamStr = teams[i];
 				team = i;
+				spaceshipType = 0;
+				if (team == Behaviour::Team::FISH) 	spaceshipTypeStr = fishTypes[0];
+				else	spaceshipTypeStr = robotTypes[0];
+
+
 			}
 			if (is_selected)
 				ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
@@ -68,24 +79,39 @@ void ScreenMainMenu::gui()
 		ImGui::EndCombo();
 	}
 
-
-	const char* spaceshipTypes[] = { "Type 0", "Type 1", "Type 2" };
-	static const char* spaceshipTypeStr = spaceshipTypes[0];
-	static uint8 spaceshipType = 0;
-	if (ImGui::BeginCombo("Spaceship##combo", spaceshipTypeStr)) // The second parameter is the label previewed before opening the combo.
-	{
-		for (uint8 i = 0; i < IM_ARRAYSIZE(spaceshipTypes); i++)
+	if (team == Behaviour::Team::FISH) {
+		if (ImGui::BeginCombo("Spaceship##combo", spaceshipTypeStr)) // The second parameter is the label previewed before opening the combo.
 		{
-			bool is_selected = (spaceshipTypeStr == spaceshipTypes[i]); // You can store your selection however you want, outside or inside your objects
-			if (ImGui::Selectable(spaceshipTypes[i], is_selected))
+			for (uint8 i = 0; i < IM_ARRAYSIZE(fishTypes); i++)
 			{
-				spaceshipTypeStr = spaceshipTypes[i];
-				spaceshipType = i;
+				bool is_selected = (spaceshipTypeStr == fishTypes[i]); // You can store your selection however you want, outside or inside your objects
+				if (ImGui::Selectable(fishTypes[i], is_selected))
+				{
+					spaceshipTypeStr = fishTypes[i];
+					spaceshipType = i;
+				}
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
 			}
-			if (is_selected)
-				ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+			ImGui::EndCombo();
 		}
-		ImGui::EndCombo();
+	}
+	else {
+		if (ImGui::BeginCombo("Spaceship##combo", spaceshipTypeStr)) // The second parameter is the label previewed before opening the combo.
+		{
+			for (uint8 i = 0; i < IM_ARRAYSIZE(robotTypes); i++)
+			{
+				bool is_selected = (spaceshipTypeStr == fishTypes[i]); // You can store your selection however you want, outside or inside your objects
+				if (ImGui::Selectable(robotTypes[i], is_selected))
+				{
+					spaceshipTypeStr = robotTypes[i];
+					spaceshipType = i;
+				}
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+			}
+			ImGui::EndCombo();
+		}
 	}
 
 	static bool showInvalidUserName = false;
