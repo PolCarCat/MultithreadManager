@@ -20,16 +20,16 @@ void ScreenGame::enable()
 	}
 
 	spaceTopLeft = Instantiate();
-	spaceTopLeft->texture = App->modResources->space;
+	spaceTopLeft->texture = App->modResources->sea;
 	spaceTopLeft->order = -1;
 	spaceTopRight = Instantiate();
-	spaceTopRight->texture = App->modResources->space;
+	spaceTopRight->texture = App->modResources->sea;
 	spaceTopRight->order = -1;
 	spaceBottomLeft = Instantiate();
-	spaceBottomLeft->texture = App->modResources->space;
+	spaceBottomLeft->texture = App->modResources->sea;
 	spaceBottomLeft->order = -1;
 	spaceBottomRight = Instantiate();
-	spaceBottomRight->texture = App->modResources->space;
+	spaceBottomRight->texture = App->modResources->sea;
 	spaceBottomRight->order = -1;
 }
 

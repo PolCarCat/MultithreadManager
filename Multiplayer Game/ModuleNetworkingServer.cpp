@@ -379,16 +379,28 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 	clientProxy.gameObject->size = { 100, 100 };
 	clientProxy.gameObject->angle = 45.0f;
 
-
-	if (spaceshipType == 0) {
-		clientProxy.gameObject->texture = App->modResources->spacecraft1;
+	if (team == 0)
+	{
+		if (spaceshipType == 0) {
+			clientProxy.gameObject->texture = App->modResources->pufferfish;
+		}
+		else if (spaceshipType == 1) {
+			clientProxy.gameObject->texture = App->modResources->flatfish;
+		}
+		else {
+			clientProxy.gameObject->texture = App->modResources->tuna_red;
+		}
 	}
-	else if (spaceshipType == 1) {
-		clientProxy.gameObject->texture = App->modResources->spacecraft2;
+	else
+	{
+		if (spaceshipType == 0) {
+			clientProxy.gameObject->texture = App->modResources->submarine;
+		}
+		else {
+			clientProxy.gameObject->texture = App->modResources->destroyer;
+		}
 	}
-	else {
-		clientProxy.gameObject->texture = App->modResources->spacecraft3;
-	}
+	
 
 	// Create collider
 	clientProxy.gameObject->collider = App->modCollision->addCollider(ColliderType::Player, clientProxy.gameObject);
@@ -421,7 +433,7 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
 	gameObject->size = { 20, 60 };
 	gameObject->angle = parent->angle;
 	gameObject->position = parent->position;
-	gameObject->texture = App->modResources->laser;
+	gameObject->texture = App->modResources->torpedo;
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
 
 	// Create behaviour

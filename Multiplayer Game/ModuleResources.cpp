@@ -31,13 +31,15 @@ bool ModuleResources::init()
 	loadingFinished = true;
 	completionRatio = 1.0f;
 #else
-	loadTextureAsync("space_background.jpg", &space);
-	loadTextureAsync("asteroid1.png",        &asteroid1);
-	loadTextureAsync("asteroid2.png",        &asteroid2);
-	loadTextureAsync("spacecraft1.png",      &spacecraft1);
-	loadTextureAsync("spacecraft2.png",      &spacecraft2);
-	loadTextureAsync("spacecraft3.png",      &spacecraft3);
-	loadTextureAsync("laser.png",            &laser);
+	loadTextureAsync("sea.png",				&sea);
+	loadTextureAsync("submarine.png",		&submarine);
+	loadTextureAsync("destroyer.png",		&destroyer);
+	loadTextureAsync("pufferfish.png",      &pufferfish);
+	loadTextureAsync("flatfish.png",		&flatfish);
+	loadTextureAsync("tuna_red.png",		&tuna_red);
+	loadTextureAsync("tuna_green.png",		&tuna_green);
+	loadTextureAsync("tuna_brown.png",		&tuna_brown);
+	loadTextureAsync("torpedo.png",			&torpedo);
 #endif
 
 	return true;

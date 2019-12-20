@@ -52,8 +52,8 @@ void ScreenMainMenu::gui()
 	static const char* teamStr = teams[0];
 	static uint8 team = 0;
 
-	const char* fishTypes[] = { "Salmon", "Pupperfish", "Tuna" };
-	const char* robotTypes[] = { "Destroyer", "Submarine" };
+	const char* fishTypes[] = { "Pupperfish", "Flatfish", "Tuna" };
+	const char* robotTypes[] = { "Submarine", "Destroyer" };
 
 	static const char* spaceshipTypeStr = fishTypes[0];
 	static uint8 spaceshipType = 0;

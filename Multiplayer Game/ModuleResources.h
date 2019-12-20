@@ -9,13 +9,15 @@ class ModuleResources : public Module
 public:
 
 	Texture *background = nullptr;
-	Texture *space = nullptr;
-	Texture *asteroid1 = nullptr;
-	Texture *asteroid2 = nullptr;
-	Texture *spacecraft1 = nullptr;
-	Texture *spacecraft2 = nullptr;
-	Texture *spacecraft3 = nullptr;
-	Texture *laser = nullptr;
+	Texture *sea = nullptr;
+	Texture *submarine = nullptr;
+	Texture *destroyer = nullptr;
+	Texture *pufferfish = nullptr;
+	Texture *tuna_red = nullptr;
+	Texture *tuna_green = nullptr;
+	Texture *tuna_brown = nullptr;
+	Texture *flatfish = nullptr;
+	Texture *torpedo = nullptr;
 
 	bool finishedLoading = false;
 private:
