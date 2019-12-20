@@ -44,7 +44,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet)
 
 				bool isBullet = false;
 
-				
+				packet << (uint8)newGameObject->behaviour->team;
+
 				packet << newGameObject->behaviour->type;
 
 				//packet << newGameObject->tag;

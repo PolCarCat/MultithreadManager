@@ -109,8 +109,10 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 
 				std::string playerName;
 				uint8 spaceshipType;
+				uint8 team;
 				packet >> playerName;
 				packet >> spaceshipType;
+				packet >> team;
 
 				proxy->address.sin_family = fromAddress.sin_family;
 				proxy->address.sin_addr.S_un.S_addr = fromAddress.sin_addr.S_un.S_addr;
@@ -120,7 +122,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				proxy->clientId = nextClientId++;
 
 				// Create new network object
-				spawnPlayer(*proxy, spaceshipType);
+				spawnPlayer(*proxy, spaceshipType, team);
 
 				// Send welcome to the new player
 				OutputMemoryStream welcomePacket;
@@ -370,12 +372,13 @@ void ModuleNetworkingServer::destroyClientProxy(ClientProxy * proxy)
 // Spawning
 //////////////////////////////////////////////////////////////////////
 
-GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8 spaceshipType)
+GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8 spaceshipType, uint8 team)
 {
 	// Create a new game object with the player properties
 	clientProxy.gameObject = Instantiate();
 	clientProxy.gameObject->size = { 100, 100 };
 	clientProxy.gameObject->angle = 45.0f;
+
 
 	if (spaceshipType == 0) {
 		clientProxy.gameObject->texture = App->modResources->spacecraft1;
@@ -392,7 +395,7 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 	clientProxy.gameObject->collider->isTrigger = true;
 
 	// Create behaviour
-	clientProxy.gameObject->behaviour = new Spaceship;
+	clientProxy.gameObject->behaviour = new Spaceship((Behaviour::Team)team);
 	clientProxy.gameObject->behaviour->gameObject = clientProxy.gameObject;
 
 	// Assign a new network identity to the object
@@ -422,7 +425,7 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
 
 	// Create behaviour
-	gameObject->behaviour = new Laser;
+	gameObject->behaviour = new Laser(parent->behaviour->team);
 	gameObject->behaviour->gameObject = gameObject;
 
 	// Assign a new network identity to the object

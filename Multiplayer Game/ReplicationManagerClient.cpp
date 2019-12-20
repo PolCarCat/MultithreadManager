@@ -25,23 +25,28 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet, uint32 cli
 				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(newGO, id);
 			}
 
+			uint8 team;
+			packet >> team;
+
+			Behaviour::BehaviourType type;
+			packet >> type;
+
 			if (id == clientNetID)
 			{
-				Spaceship* behavior = new Spaceship();
+				Spaceship* behavior = new Spaceship((Behaviour::Team)team);
 				behavior->gameObject = newGO;
 				behavior->isServer = false;
 				newGO->behaviour = behavior;
 			}
 			else {
-				newGO->behaviour = new Behaviour();
+				newGO->behaviour = new Behaviour((Behaviour::Team)team);
 				newGO->behaviour->isServer = false;
 			}
 
-			Behaviour::BehaviourType type;
-			packet >> type;
+
 
 			if (type == Behaviour::BehaviourType::BULLET) {
-				newGO->behaviour = new Laser();
+				newGO->behaviour = new Laser((Behaviour::Team)team);
 				newGO->behaviour->gameObject = newGO;
 				newGO->behaviour->isServer = false;
 			}
